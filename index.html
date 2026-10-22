@@ -714,6 +714,23 @@ img, canvas, svg { max-width: 100%; height: auto; }
   body.role-principal button[onclick*="openBackupRestore("] { display:none !important; }
   body.role-principal .super-admin-only { display:none !important; }
 </style>
+
+<style id="principal-policy-visibility">
+/* Principal may manage ordinary student/exam records, but sensitive tools remain Super Admin-only. */
+body.role-principal button[onclick*="openAcademicCleanup("],
+body.role-admin button[onclick*="openAcademicCleanup("],
+body.role-principal button[onclick*="openBackupRestore("],
+body.role-principal button[onclick*="openArchiveCenter("],
+body.role-principal button[onclick*="openStudentArchiveManager("],
+body.role-principal button[onclick*="openPromotionHistoryArchiveManager("],
+body.role-principal button[onclick*="importData("],
+body.role-principal button[onclick*="exportData("],
+body.role-principal button[onclick*="restoreItem("],
+body.role-principal button[onclick*="permanentlyDeleteSelectedDeletedItems("],
+body.role-principal button[onclick*="hideSelectedDeletedItems("],
+body.role-principal button[onclick*="permanentlyDeleteAllPromotionHistory(") { display:none !important; }
+body.role-principal .super-admin-only { display:none !important; }
+</style>
 </head>
 <body class="role-admin" style="background: rgb(240, 242, 245);">
     <div id="toast" class="toast">Welcome Admin! 👋</div>
@@ -763,10 +780,10 @@ img, canvas, svg { max-width: 100%; height: auto; }
                 <form autocomplete="off" onsubmit="event.preventDefault(); handleLogin('super_admin');" class="space-y-3">
                   <input type="hidden" id="superAdminLoginUsername" value="superadmin" autocomplete="username">
                   <label for="superAdminLoginPassword" class="block text-gray-700 text-xs font-bold mb-1 uppercase tracking-wider">Super Admin Password</label>
-                  <input type="password" id="superAdminLoginPassword" value="" autocomplete="current-password" class="w-full px-3 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition" placeholder="Enter Super Admin Password" required>
+                  <input type="password" id="superAdminLoginPassword" value="" autocomplete="off" class="w-full px-3 py-3 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:outline-none transition" placeholder="Enter Super Admin Password" required>
                   <button type="submit" class="bg-gradient-to-r from-purple-600 to-purple-700 text-white font-bold py-3 rounded-xl transition"><i class="fa-solid fa-shield-halved mr-1"></i> Super Admin Login</button>
                 </form>
-                <div class="text-center mt-2"><span class="text-xs text-purple-700 font-semibold">Separate role — backend setup required</span></div>
+                <div class="text-center mt-2"><button type="button" onclick="openSuperAdminForgotPassword()" class="forgot-password-link">Forgot password?</button></div>
               </section>
             </div>
 
@@ -1375,8 +1392,8 @@ img, canvas, svg { max-width: 100%; height: auto; }
                     <div id="tab-fees" class="tab-content hidden">
                         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                             <h3 class="font-bold text-gray-800"><i class="fa-solid fa-coins mr-2 text-yellow-600"></i> Fee Management</h3>
-                            <div class="flex flex-wrap items-center gap-1 admin-only" title="Generate this month's Monthly Fee challans for all students"><select id="feeMonthlyChallanMonth" class="bg-white border border-gray-200 rounded-xl px-2 py-2 text-xs font-semibold focus:border-yellow-500 focus:outline-none"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select><button type="button" onclick="generateMonthlyFeeChallans_()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-file-invoice"></i> Generate Monthly Challans</button>
-                                    <button type="button" onclick="deleteMonthlyFeeChallans_()" title="Move all UNPAID Monthly challans of the selected month to Trash" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Delete Monthly Challans</button></div>
+                            <div class="flex flex-wrap items-center gap-1 admin-only super-admin-only" title="Super Admin only: preview and generate Monthly Fee challans"><select id="feeMonthlyChallanSession" class="bg-white border border-gray-200 rounded-xl px-2 py-2 text-xs font-semibold" title="Academic session"><option value="current">Current Session</option><option value="previous">Previous Session</option></select><select id="feeMonthlyChallanClass" class="bg-white border border-gray-200 rounded-xl px-2 py-2 text-xs font-semibold" title="Class"><option value="__all__">All Classes</option></select><select id="feeMonthlyChallanMonth" class="bg-white border border-gray-200 rounded-xl px-2 py-2 text-xs font-semibold focus:border-yellow-500 focus:outline-none"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select><button type="button" onclick="generateMonthlyFeeChallans_()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-file-invoice"></i> Generate Monthly Challans</button>
+                                    <button type="button" onclick="deleteMonthlyFeeChallans_()" title="Super Admin only: move unpaid Monthly challans to Trash" class="bg-red-600 super-admin-only hover:bg-red-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Delete Monthly Challans</button></div>
                                 <div class="flex flex-wrap gap-2">
                                 <button onclick="openSectionReportSelection_('student-fee')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 admin-only"><i class="fa-solid fa-file-lines"></i> Class Report</button>
                                 <button onclick="openSectionReportSelection_('student-fee')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 admin-only"><i class="fa-solid fa-print"></i> Print Report</button>
@@ -1391,16 +1408,23 @@ img, canvas, svg { max-width: 100%; height: auto; }
                                 <button onclick="printFeeVouchersByStatus()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs px-3 py-2 rounded-xl transition flex items-center gap-1 admin-only"><i class="fa-solid fa-receipt"></i> Print Vouchers</button>
                             </div>
                         </div>
-<div id="feeDetailsUnlockPanel" class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-4 text-center"><div class="font-bold text-gray-800"><i class="fa-solid fa-lock mr-2 text-amber-600"></i>Fee Details Protected</div><p class="text-xs text-gray-600 mt-1">Enter the Admin password to view collected, pending and other fee details.</p><button type="button" onclick="openFeeDetailsPasswordGate_()" class="mt-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm px-4 py-2 rounded-xl"><i class="fa-solid fa-key mr-1"></i> Unlock Fee Details</button></div><div id="feeDetailsProtectedContent" class="relative hidden">
+<div id="feeDetailsProtectedContent" class="relative">
 
-                        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
-                            <div class="bg-purple-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Total Students</p><p class="text-xl font-bold text-purple-600" id="feeTotalStudents">0</p></div>
-                            <div class="bg-blue-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Total Fee</p><p class="text-xl font-bold text-blue-600" id="feeTotalAmount">₨ 0</p></div>
-                            <div class="bg-green-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Collected</p><p class="text-xl font-bold text-green-600" id="totalCollected">₨ 0</p></div>
-                            <div class="bg-orange-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Remaining</p><p class="text-xl font-bold text-orange-600" id="totalPending">₨ 0</p></div>
-                            <div class="bg-emerald-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Paid Students</p><p class="text-xl font-bold text-emerald-600" id="feePaidStudents">0</p></div>
-                            <div class="bg-red-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Due Students</p><p class="text-xl font-bold text-red-600" id="feeDueStudents">0</p></div>
+                        <div id="feeIncreasePanel" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4 admin-only super-admin-only">
+                            <div class="font-bold text-amber-900 mb-1"><i class="fa-solid fa-arrow-trend-up mr-1"></i> Fee Increase</div>
+                            <p class="text-xs text-amber-800 mb-3">Sets the amount for newly generated monthly challans from the effective month. Existing fee/payment records are not changed.</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div><label class="text-xs font-bold block mb-1">Increase Type</label><select id="feeIncreaseType" class="w-full border rounded-xl px-3 py-2 text-sm"><option value="fixed">Fixed Amount (₨)</option><option value="percent">Percentage (%)</option></select></div>
+                                <div><label class="text-xs font-bold block mb-1">Increase Value</label><input id="feeIncreaseValue" type="number" min="0" step="0.01" class="w-full border rounded-xl px-3 py-2 text-sm" placeholder="e.g. 500 or 10"></div>
+                                <div><label class="text-xs font-bold block mb-1">Effective Month</label><select id="feeIncreaseMonth" class="w-full border rounded-xl px-3 py-2 text-sm"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+                                <div><label class="text-xs font-bold block mb-1">Apply To</label><select id="feeIncreaseScope" onchange="feeIncreaseScopeChanged_()" class="w-full border rounded-xl px-3 py-2 text-sm"><option value="all">All Classes</option><option value="class">One Class</option><option value="section">One Section</option><option value="student">Single Student</option></select></div>
+                                <div id="feeIncreaseClassWrap" class="hidden"><label class="text-xs font-bold block mb-1">Class</label><select id="feeIncreaseClass" onchange="feeIncreaseScopeChanged_()" class="w-full border rounded-xl px-3 py-2 text-sm"></select></div>
+                                <div id="feeIncreaseSectionWrap" class="hidden"><label class="text-xs font-bold block mb-1">Section</label><input id="feeIncreaseSection" class="w-full border rounded-xl px-3 py-2 text-sm" placeholder="Exact section name"></div>
+                                <div id="feeIncreaseStudentWrap" class="hidden"><label class="text-xs font-bold block mb-1">Student</label><select id="feeIncreaseStudent" class="w-full border rounded-xl px-3 py-2 text-sm"></select></div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2 mt-3"><button type="button" onclick="saveFeeIncreaseSettings_()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs px-4 py-2 rounded-xl">Save Fee Increase</button><button type="button" onclick="clearFeeIncreaseSettings_()" class="bg-white border border-amber-300 text-amber-900 font-bold text-xs px-4 py-2 rounded-xl">Clear Setting</button><span id="feeIncreaseStatus" class="text-xs text-amber-900"></span></div>
                         </div>
+
                         <div class="bg-white border border-gray-200 rounded-2xl p-4 mb-4">
                             <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <div class="font-bold text-gray-800"><i class="fa-solid fa-magnifying-glass text-yellow-600 mr-1"></i> Student Fee Lookup</div>
@@ -1411,6 +1435,15 @@ img, canvas, svg { max-width: 100%; height: auto; }
                                 <div id="feeLookupResults" class="hidden absolute left-0 right-0 top-full mt-1 z-20 max-h-56 overflow-y-auto border border-gray-200 rounded-xl bg-white shadow-xl"></div>
                             </div>
                             <div id="selectedFeeStudentSummary" class="mt-4 hidden"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-4">
+                            <div class="bg-purple-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Total Students</p><p class="text-xl font-bold text-purple-600" id="feeTotalStudents">0</p></div>
+                            <div class="bg-blue-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Total Fee <span class="normal-case font-semibold">(after discount)</span></p><p class="text-xl font-bold text-blue-600" id="feeTotalAmount">₨ 0</p></div>
+                            <div class="bg-green-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Collected</p><p class="text-xl font-bold text-green-600" id="totalCollected">₨ 0</p></div>
+                            <div class="bg-orange-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Remaining</p><p class="text-xl font-bold text-orange-600" id="totalPending">₨ 0</p></div>
+                            <div class="bg-emerald-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Paid Students</p><p class="text-xl font-bold text-emerald-600" id="feePaidStudents">0</p></div>
+                            <div class="bg-red-50 rounded-xl p-3 text-center"><p class="text-xs text-gray-500 font-bold uppercase">Due Students</p><p class="text-xl font-bold text-red-600" id="feeDueStudents">0</p></div>
                         </div>
                     
 </div>
@@ -1957,7 +1990,7 @@ img, canvas, svg { max-width: 100%; height: auto; }
                 <div class="md:col-span-2"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Fee Type</label><select id="feeType" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"><option value="Monthly">Monthly Fee</option><option value="Admission">Admission Fee</option><option value="Transport">Transport Fee</option></select></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Fee Month</label><select id="feeMonth" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Academic Year</label><input id="feeAcademicYear" value="2026" readonly title="Academic year" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5 cursor-not-allowed"></div>
-                <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Fee Amount (₨)</label><input type="number" id="feeAmount" min="0" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"></div>
+                <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Fee Amount (₨)</label><input type="number" id="feeAmount" min="0" oninput="updateFeeDuePreview()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Paid Amount (₨)</label><input type="number" id="feePaidAmount" min="0" oninput="updateFeeDuePreview()" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Remaining / Due (₨)</label><input type="number" id="feeDueAmount" readonly class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5"></div>
                 <div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Payment Date</label><input type="date" id="feePaymentDate" class="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5"></div>
@@ -2176,6 +2209,9 @@ img, canvas, svg { max-width: 100%; height: auto; }
             currentUser = result.user;
             currentUsername = result.user.username;
             SUPABASE_ACCESS_TOKEN = result.session.access_token;
+            // Do not leave the Super Admin password in the hidden login form after success.
+            const superAdminPasswordField = document.getElementById('superAdminLoginPassword');
+            if (superAdminPasswordField) superAdminPasswordField.value = '';
             // SESSION PERSISTENCE: keep the authenticated session across a page refresh.
             // This does not change login credentials or database behavior.
             try {
@@ -2241,19 +2277,27 @@ img, canvas, svg { max-width: 100%; height: auto; }
 
     // ==================== ROLE PERMISSIONS ====================
     function applyRolePermissions() {
-        if (currentUser && currentUser.role === 'Teacher') {
-            // Teacher cannot see admin tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                const tab = btn.dataset.tab;
-                if (['reports', 'deleted', 'settings'].includes(tab)) {
-                    btn.style.display = 'none';
-                }
-            });
-            // Hide profile settings (admin-only)
-            document.querySelector('.admin-only')?.style.setProperty('display', 'none');
+        const isTeacher = normalizedRoleName_(currentUser?.role) === 'teacher';
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            const tab = String(btn.dataset.tab || '');
+            // Teacher may access ONLY student records, attendance, exams and exam results.
+            const teacherAllowedTabs = ['students', 'attendance', 'exams'];
+            btn.style.display = (!isTeacher || teacherAllowedTabs.includes(tab)) ? '' : 'none';
+        });
+        if (isTeacher) {
+            // Hide every admin-only control, not just the first matching element.
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = '');
         } else {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.style.display = '');
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+            document.querySelectorAll('.teacher-only').forEach(el => el.style.display = 'none');
         }
+    }
+
+    function denyTeacherAccess_(message = 'Teacher access is limited to Students, Attendance, Exams and Exam Results.') {
+        if (normalizedRoleName_(currentUser?.role) !== 'teacher') return false;
+        showToast(message, 'error');
+        return true;
     }
 
     // ==================== LOCAL STORAGE ====================
@@ -2377,7 +2421,16 @@ img, canvas, svg { max-width: 100%; height: auto; }
         let h = d.getHours(); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
         return dmy_(d) + ', ' + h + ':' + String(d.getMinutes()).padStart(2, '0') + ' ' + ap;
     }
-    function currentReceiverName_() { return String((currentUser && (currentUser.name || currentUser.fullName || currentUser.username)) || '').trim(); }
+    function currentReceiverName_() {
+        // Receipt must identify the active role that received the payment, not a generic backend username.
+        // The current Admin backend role is presented through the Principal login card in this UI.
+        if (!currentUser) return '';
+        const role = normalizedRoleName_(currentUser.role);
+        if (['superadmin', 'owner'].includes(role)) return 'Super Admin';
+        if (role === 'teacher') return 'Teacher';
+        if (['admin', 'principal'].includes(role)) return 'Principal';
+        return String(currentUser.name || currentUser.fullName || currentUser.username || '').trim();
+    }
     function feePaymentToRow(p) {
         return { id: String(p.id), school_id: SUPABASE_SCHOOL_ID, fee_id: String(p.feeId), student_id: p.studentId || null, student_name: p.studentName || null,
             class_name: p.class || null, fee_type: p.feeType || null, month: p.month || null, academic_year: p.academicYear || null,
@@ -2426,6 +2479,36 @@ img, canvas, svg { max-width: 100%; height: auto; }
             if (it.paidNow > 0) rows.push(Object.assign({}, base, { id: 'pay_' + uuid_(), paymentDate: it.date, amount: it.paidNow, paymentMethod: it.method || '', receivedBy: it.receivedBy || '', receiptNo: fee.receiptNumber || '' }));
         }));
         return rows;
+    }
+    // When a payment is corrected DOWN in Edit Fee (paid by mistake), remove the same amount from the date-wise payment history
+    // (newest payments first) so daily / date-wise collection reports no longer count it.
+    async function reduceFeePaymentHistory_(feeId, amountToRemove) {
+        if (!(amountToRemove > 0.5)) return true;
+        if (!navigator.onLine || !databaseLoadedFromSupabase) return false;
+        try {
+            const rows = await supabaseTableRequest('fee_payments', { query: `?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&fee_id=eq.${encodeURIComponent(String(feeId))}&select=id,amount,payment_date,created_at&order=payment_date.desc,created_at.desc` });
+            let remaining = amountToRemove;
+            for (const r of (Array.isArray(rows) ? rows : [])) {
+                if (remaining <= 0.5) break;
+                const amt = Number(r.amount || 0);
+                const q = `?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(String(r.id))}`;
+                if (amt <= remaining + 0.5) {
+                    await supabaseTableRequest('fee_payments', { method: 'DELETE', query: q });
+                    remaining -= amt;
+                } else {
+                    await supabaseTableRequest('fee_payments', { method: 'PATCH', query: q, headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ amount: amt - remaining }) });
+                    remaining = 0;
+                }
+            }
+            if (Array.isArray(db.feePayments)) {
+                db.feePayments = db.feePayments.filter(p => String(p.feeId) !== String(feeId)).concat(await fetchFeePaymentsForFee_(feeId));
+            }
+            queueDailyBackupAfterSave_();
+            return true;
+        } catch (error) {
+            console.error('Payment history reduce failed:', error);
+            return false;
+        }
     }
     async function saveFeePaymentRowsFast_(rows) {
         if (!rows || !rows.length) return true;
@@ -2733,7 +2816,7 @@ async function saveArchiveFast_(items, label='archive') {
         return { id:String(f.id), school_id:SUPABASE_SCHOOL_ID, student_id:f.studentId || null, student_name:f.studentName || null,
             roll_no:f.rollNo || null, class_name:f.class || f.className || null, father_guardian_name:f.fatherGuardianName || null,
             month:f.month || null, academic_year:f.academicYear || null, fee_amount:Number(f.feeAmount ?? f.amount ?? 0),
-            paid_amount:Number(f.paidAmount ?? 0), due_amount:Number(f.dueAmount ?? Math.max(0,(f.feeAmount ?? f.amount ?? 0)-(f.paidAmount ?? 0))),
+            paid_amount:Number(f.paidAmount ?? 0), due_amount:Number(f.dueAmount ?? Math.max(0,(f.feeAmount ?? f.amount ?? 0)-Number(f.discount || 0)-(f.paidAmount ?? 0))),
             status:f.status || 'Unpaid', payment_date:safeDate_(f.paymentDate || f.date), receipt_no:f.receiptNumber || f.receiptNo || null,
             notes:f.notes || null, fee_type:f.feeType || 'Monthly', discount:Number(f.discount || 0),
             payment_method:f.paymentMethod || f.payment_method || null, received_by:f.receivedBy || f.received_by || null };
@@ -3548,22 +3631,9 @@ async function saveArchiveFast_(items, label='archive') {
     }
 
     function getStudentEffectiveFeeStatus_(student, className) {
-        const records = (db.fees || []).filter(f =>
-            String(f.studentId || f.student_id || '') === String(student?.id || '') &&
-            String(f.class || f.className || '') === String(className || '')
-        );
-        if (!records.length) return normalizeFeeStatus(student?.feeStatus, 0, 0);
-        // The student badge represents the latest fee entry. Older unpaid records
-        // must not overwrite a later paid entry for the same student.
-        const latest = records.slice().sort((a,b) => {
-            const ak = String(a.academicYear || a.academic_year || '') + '|' + String(a.paymentDate || a.date || '') + '|' + String(a.month || '') + '|' + String(a.id || '');
-            const bk = String(b.academicYear || b.academic_year || '') + '|' + String(b.paymentDate || b.date || '') + '|' + String(b.month || '') + '|' + String(b.id || '');
-            return bk.localeCompare(ak);
-        })[0];
-        const amount = feeAmountValue(latest), paid = feePaidValue(latest), due = feeDueValue(latest);
-        if ((amount > 0 && paid >= amount) || due <= 0 && amount > 0) return 'Paid';
-        if (paid > 0) return 'Partial';
-        return 'Unpaid';
+        const ref = getStudentFeeReferenceRecord_(student, className);
+        if (!ref) return normalizeFeeStatus(student?.feeStatus, 0, 0);
+        return feeRecordStatus_(ref);
     }
 
     function loadStudents(search = '') {
@@ -3670,6 +3740,8 @@ async function saveArchiveFast_(items, label='archive') {
     }
 
     function openStudentArchiveManager() {
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can manage Student Archive', 'error'); return; }
+        if (denyTeacherAccess_()) return;
         if (!canManageSchool_()) { showToast('Only admin can manage Student Archive', 'error'); return; }
         const modal=document.getElementById('studentArchiveManagerModal');
         if (!modal) return;
@@ -3734,7 +3806,7 @@ async function saveArchiveFast_(items, label='archive') {
 
     function getSelectedArchiveIds_() { return [...document.querySelectorAll('.student-archive-check:checked')].map(cb=>String(cb.dataset.id||'')).filter(Boolean); }
 
-    async function archiveSelectedCurrentClassStudents() {
+    async function archiveSelectedCurrentClassStudents() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can archive student records', 'error'); return; }
         if (!canManageSchool_()) return;
         const cls=document.getElementById('classSelect')?.value || 'PG';
         const selectedIds=getSelectedStudentRefs().filter(r=>String(r.className)===String(cls)).map(r=>String(r.id));
@@ -3751,7 +3823,7 @@ async function saveArchiveFast_(items, label='archive') {
         showToast(`✅ ${selectedIds.length} student(s) archived. Historical records remain محفوظ.`, 'success');
     }
 
-    async function restoreArchivedStudentById(studentId) {
+    async function restoreArchivedStudentById(studentId) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can restore archived students', 'error'); return; }
         if (!canManageSchool_()) return;
         const item=studentArchiveCache_.find(x=>String(x.id)===String(studentId));
         if (!item) { showToast('Archived student not found.', 'error'); return; }
@@ -3768,7 +3840,7 @@ async function saveArchiveFast_(items, label='archive') {
         showToast(`✅ ${item.name} restored to Class ${targetClass}.`, 'success');
     }
 
-    async function permanentlyDeleteArchivedStudent(studentId) {
+    async function permanentlyDeleteArchivedStudent(studentId) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can permanently delete archived student data', 'error'); return; }
         if (!canManageSchool_()) return;
         const item=studentArchiveCache_.find(x=>String(x.id)===String(studentId));
         if (!item) return;
@@ -4088,7 +4160,7 @@ async function saveArchiveFast_(items, label='archive') {
         return promotionHistoryArchiveCache_;
     }
 
-    async function archivePromotionHistoryRecord(index) {
+    async function archivePromotionHistoryRecord(index) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can archive promotion history', 'error'); return; }
         if (!canManageSchool_()) { showToast('Only admin can archive promotion history', 'error'); return; }
         const history = Array.isArray(db.promotionHistory) ? db.promotionHistory : [];
         const item = history[index];
@@ -4127,7 +4199,7 @@ async function saveArchiveFast_(items, label='archive') {
         return promotionHistoryArchiveCache_.filter(x => String(x.studentId || '') === String(studentId || ''));
     }
 
-    async function archiveSelectedPromotionHistory() {
+    async function archiveSelectedPromotionHistory() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can archive promotion history', 'error'); return; }
         if (!canManageSchool_()) { showToast('Only admin can archive promotion history', 'error'); return; }
         const checked = Array.from(document.querySelectorAll('.promotion-row-check:checked'));
         if (!checked.length) { showToast('Select at least one promotion history record first.', 'warning'); return; }
@@ -4160,6 +4232,8 @@ async function saveArchiveFast_(items, label='archive') {
     }
 
     function openPromotionHistoryArchiveManager() {
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can open Promotion Archive History', 'error'); return; }
+        if (denyTeacherAccess_()) return;
         if (!canManageSchool_()) { showToast('Only admin can open Promotion Archive History', 'error'); return; }
         const modal = document.getElementById('promotionHistoryArchiveModal');
         if (!modal) return;
@@ -4363,7 +4437,7 @@ async function saveArchiveFast_(items, label='archive') {
         }
     }
 
-    async function permanentlyDeleteAllPromotionHistory() {
+    async function permanentlyDeleteAllPromotionHistory() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can delete promotion history', 'error'); return; }
         if (!isSuperAdminUser_()) { showToast('Only Super Admin can delete or clear history', 'error'); return; }
         const count = (db.promotionHistory || []).length;
         if (!count) { showToast('Promotion history is already empty', 'info'); return; }
@@ -6358,11 +6432,27 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
     function feePaidValue(f) {
         const amount=feeAmountValue(f);
         if (f?.paidAmount != null && Number(f.paidAmount) > 0) return Number(f.paidAmount);
-        if (normalizeFeeStatus(f?.status, amount, f?.paidAmount) === 'Paid' && amount > 0) return amount;
+        if (normalizeFeeStatus(f?.status, amount, f?.paidAmount) === 'Paid' && amount > 0) return Math.max(0, amount - Number(f?.discount || 0));
         return Number(f?.paidAmount || 0);
     }
     function feeDueValue(f) { return Math.max(0, Number(f.dueAmount != null ? f.dueAmount : feeAmountValue(f) - Number(f.discount||0) - feePaidValue(f))); }
     function getFeeStudent(f) { return (db.students?.[f.class] || []).find(s => s.id === f.studentId); }
+    // ---- Shared fee helpers: every screen / print uses these so numbers and statuses can never disagree ----
+    // Chronological key of a fee record (session start year + month). Sessions are calendar years (January first).
+    function feePeriodKey_(f) { const y=Number(String(feeAcademicYearKey_(f?.academicYear||f?.academic_year,f?.month)).match(/\d{4}/)?.[0]||0); const m=FEE_MONTHS.indexOf(normalizeFeeMonthKey_(f?.month)); return y*100+(m<0?-1:m); }
+    // What the student actually has to pay for this record (fee minus discount).
+    function feeNetValue_(f) { return Math.max(0, feeAmountValue(f) - Math.max(0, Number(f?.discount||0))); }
+    function feeRecordStatus_(f) { const a=feeAmountValue(f), p=feePaidValue(f), d=feeDueValue(f); if (a>0 && d<=0) return 'Paid'; if (p>0) return 'Partial'; return 'Unpaid'; }
+    function latestFeeRecord_(records) { return (records||[]).slice().sort((a,b)=>feePeriodKey_(b)-feePeriodKey_(a) || String(b.paymentDate||b.date||'').localeCompare(String(a.paymentDate||a.date||'')) || String(b.id||'').localeCompare(String(a.id||'')))[0] || null; }
+    // The ONE record that represents a student's fee right now: this month's Monthly fee if it exists, otherwise the latest month on file.
+    function getStudentFeeReferenceRecord_(student, className) {
+        const records=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student?.id||'') && String(f.class||f.className||'')===String(className||''));
+        if (!records.length) return null;
+        const cur=getStudentMonthFeeRecord_(className, student.id, FEE_MONTHS[new Date().getMonth()], getCurrentAcademicYear());
+        if (cur) return cur;
+        const monthly=records.filter(f=>(f.feeType||f.fee_type||'Monthly')==='Monthly');
+        return latestFeeRecord_(monthly.length?monthly:records);
+    }
     function getCurrentAcademicYear() { const y = new Date().getFullYear(); return `${y}-${String(y + 1).slice(-2)}`; }
     function generateReceiptNumber() { return 'FEE-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6); }
     function escFee(v) { return String(v == null ? '' : v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -6462,23 +6552,14 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
     // which meant almost anyone with an actual fee history could never be
     // printed as pending/unpaid/partial with their real due amount.
     function getFeeStudentPrintInfo_(student, className) {
-        const status = getStudentEffectiveFeeStatus_(student, className);
-        const currentMonth = FEE_MONTHS[new Date().getMonth()];
-        const currentYear = getCurrentAcademicYear();
-        let record = getStudentMonthFeeRecord_(className, student.id, currentMonth, currentYear);
-        if (!record) {
-            const allRecords = (db.fees || []).filter(f =>
-                String(f.studentId || f.student_id || '') === String(student?.id || '') &&
-                String(f.class || f.className || '') === String(className || ''));
-            record = allRecords.slice().sort((a, b) =>
-                String(b.paymentDate || b.date || '').localeCompare(String(a.paymentDate || a.date || ''))
-            )[0] || null;
-        }
+        const record = getStudentFeeReferenceRecord_(student, className);
+        const status = record ? feeRecordStatus_(record) : normalizeFeeStatus(student?.feeStatus, 0, 0);
         const amount = record ? feeAmountValue(record) : 0;
+        const discount = record ? Math.max(0, Number(record.discount || 0)) : 0;
         const paid = record ? feePaidValue(record) : 0;
         const due = record ? feeDueValue(record) : 0;
-        const paidDate = record ? (record.paymentDate || record.date || '') : '';
-        return { status, amount, paid, due, paidDate };
+        const paidDate = (record && paid > 0) ? (record.paymentDate || record.date || '') : '';
+        return { status, amount, discount, paid, due, paidDate, record };
     }
 
     function printFeeStudentsByStatus() {
@@ -6509,13 +6590,14 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             return;
         }
 
-        const rows = students.map(({student, className, status, amount, paid, due, paidDate}) => `<tr>
+        const rows = students.map(({student, className, status, amount, discount, paid, due, paidDate}) => `<tr>
             <td>${escFee(student.name || '')}</td>
             <td>${escFee(student.rollNo || '')}</td>
             <td>${escFee(className)}</td>
             <td>${escFee(student.father || '')}</td>
             <td>${escFee(student.contact || '')}</td>
             <td>₨ ${amount.toLocaleString()}</td>
+            <td>₨ ${Number(discount || 0).toLocaleString()}</td>
             <td>₨ ${paid.toLocaleString()}</td>
             <td>₨ ${due.toLocaleString()}</td>
             <td>${escFee(status)}</td>
@@ -6523,6 +6605,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         </tr>`).join('');
 
         const totalFee = students.reduce((n, x) => n + x.amount, 0);
+        const totalDiscount = students.reduce((n, x) => n + Number(x.discount || 0), 0);
         const totalPaid = students.reduce((n, x) => n + x.paid, 0);
         const totalDue = students.reduce((n, x) => n + x.due, 0);
 
@@ -6537,12 +6620,13 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 <div><b>Status:</b> ${escFee(statusFilter)}</div>
                 <div><b>Total Students:</b> ${students.length}</div>
                 <div><b>Total Fee:</b> ₨ ${totalFee.toLocaleString()}</div>
+                <div><b>Total Discount:</b> ₨ ${totalDiscount.toLocaleString()}</div>
                 <div><b>Total Paid:</b> ₨ ${totalPaid.toLocaleString()}</div>
                 <div><b>Total Due:</b> ₨ ${totalDue.toLocaleString()}</div>
             </div>
             <table class="report-table">
                 <thead><tr>
-                    <th>Student</th><th>Roll #</th><th>Class</th><th>Father / Guardian</th><th>Contact</th><th>Fee</th><th>Paid</th><th>Due</th><th>Fee Status</th><th>Paid Date</th>
+                    <th>Student</th><th>Roll #</th><th>Class</th><th>Father / Guardian</th><th>Contact</th><th>Fee</th><th>Discount</th><th>Paid</th><th>Due</th><th>Fee Status</th><th>Paid Date</th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
             </table>
@@ -6579,7 +6663,8 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 if (selectedStatus === 'Paid') {
                     // A "Paid" voucher is a receipt for what was actually paid this
                     // month, not an outstanding-balance slip — arrears don't apply.
-                    students.push({ student, className, items: [{ feeType: 'Monthly', month: currentMonth, academicYear: currentYear, amount: info.amount, paidAmount: info.paid, dueAmount: 0 }] });
+                    const rec = info.record || {};
+                    students.push({ student, className, items: [{ feeType: rec.feeType || rec.fee_type || 'Monthly', month: rec.month || currentMonth, academicYear: rec.academicYear || rec.academic_year || currentYear, amount: info.amount, discount: info.discount, paidAmount: info.paid, dueAmount: 0 }] });
                 } else {
                     // Every outstanding fee head/month for this student — not just
                     // the current month — so last month's (or any earlier month's,
@@ -6665,8 +6750,10 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 <td>${escFee(f.rollNo || s?.rollNo || '')}</td>
                 <td>${escFee(f.class)}</td>
                 <td>${escFee(f.fatherGuardianName || s?.father || '')}</td>
-                <td>${escFee(f.month)}</td>
+                <td>${escFee(f.month || '—')}</td>
+                <td>${escFee(f.feeType || f.fee_type || 'Monthly')}</td>
                 <td>₨ ${amount.toLocaleString()}</td>
+                <td>₨ ${Number(f.discount || 0).toLocaleString()}</td>
                 <td>₨ ${paid.toLocaleString()}</td>
                 <td>₨ ${due.toLocaleString()}</td>
                 <td>${escFee(status)}</td>
@@ -6676,6 +6763,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         }).join('');
 
         const totalFee = records.reduce((n, f) => n + feeAmountValue(f), 0);
+        const totalDiscount = records.reduce((n, f) => n + Number(f.discount || 0), 0);
         const totalPaid = records.reduce((n, f) => n + feePaidValue(f), 0);
         const totalDue = records.reduce((n, f) => n + feeDueValue(f), 0);
 
@@ -6690,11 +6778,12 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 <div style="padding:10px;background:#eff6ff">Total Fee: ₨ ${totalFee.toLocaleString()}</div>
                 <div style="padding:10px;background:#ecfdf5">Collected: ₨ ${totalPaid.toLocaleString()}</div>
                 <div style="padding:10px;background:#fff7ed">Remaining: ₨ ${totalDue.toLocaleString()}</div>
+                <div style="padding:10px;background:#f5f3ff;grid-column:1/-1">Total Discount: ₨ ${totalDiscount.toLocaleString()}</div>
             </div>
             <table class="report-table">
                 <thead><tr>
                     <th>Student</th><th>Roll #</th><th>Class</th><th>Father / Guardian</th>
-                    <th>Month</th><th>Fee</th><th>Paid</th><th>Due</th><th>Status</th><th>Payment Date</th><th>Receipt #</th>
+                    <th>Month</th><th>Fee Head</th><th>Fee</th><th>Discount</th><th>Paid</th><th>Due</th><th>Status</th><th>Payment Date</th><th>Receipt #</th>
                 </tr></thead>
                 <tbody>${rows}</tbody>
             </table>
@@ -6705,8 +6794,10 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
 
     function updateFeeSummaryOnly_() {
         const fees=db.fees||[];
-        let totalFee=0,collected=0,due=0; const paidStudents=new Set(),dueStudents=new Set();
-        fees.forEach(f=>{const amount=feeAmountValue(f),paid=feePaidValue(f),remaining=feeDueValue(f),status=normalizeFeeStatus(f.status,amount,paid); totalFee+=amount;collected+=paid;due+=remaining; const sid=f.studentId||f.rollNo||f.studentName; if(status==='Paid')paidStudents.add(sid); else dueStudents.add(sid);});
+        let totalFee=0,collected=0,due=0; const dueStudents=new Set(),allFeeStudents=new Set();
+        // Total Fee = what students must pay (after discount), so Total = Collected + Remaining. A student is "Due" if ANY balance is owing, otherwise "Paid" (never both).
+        fees.forEach(f=>{const paid=feePaidValue(f),remaining=feeDueValue(f); totalFee+=feeNetValue_(f);collected+=paid;due+=remaining; const sid=f.studentId||f.rollNo||f.studentName; allFeeStudents.add(sid); if(remaining>0)dueStudents.add(sid);});
+        const paidStudents=new Set([...allFeeStudents].filter(x=>!dueStudents.has(x)));
         const totalStudents=new Set(fees.map(f=>f.studentId||f.rollNo||f.studentName)).size;
         const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
         set('feeTotalStudents',totalStudents); set('feeTotalAmount',`₨ ${totalFee.toLocaleString()}`); set('totalCollected',`₨ ${collected.toLocaleString()}`); set('totalPending',`₨ ${due.toLocaleString()}`); set('feePaidStudents',paidStudents.size); set('feeDueStudents',dueStudents.size);
@@ -6714,6 +6805,61 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
 
     function loadFees() { updateFeeSummaryOnly_(); }
 
+
+    // Keep the Fee Lookup results above the tab container so its overflow clipping
+    // cannot hide students. The results remain scrollable on small/mobile screens.
+    function positionFeeLookupResults_() {
+        const input=document.getElementById('feeLookupSearch');
+        const results=document.getElementById('feeLookupResults');
+        if(!input||!results||results.classList.contains('hidden')) return;
+        const rect=input.getBoundingClientRect();
+        // Root zoom is used only for phones requesting the browser's Desktop site.
+        // Convert visual coordinates back to CSS coordinates before positioning a body-level fixed menu.
+        const root=document.documentElement;
+        const zoom=root.classList.contains('phone-desktop') ? (parseFloat(root.style.zoom)||parseFloat(getComputedStyle(root).zoom)||1) : 1;
+        const safeZoom=Number.isFinite(zoom)&&zoom>0?zoom:1;
+        const viewWidth=window.innerWidth/safeZoom, viewHeight=window.innerHeight/safeZoom;
+        const rectLeft=rect.left/safeZoom;
+        const rectTop=rect.top/safeZoom, rectBottom=rect.bottom/safeZoom;
+        const rectWidth=(rect.right-rect.left)/safeZoom;
+        const gap=4;
+        const below=Math.max(0,viewHeight-rectBottom-gap-8);
+        const above=Math.max(0,rectTop-gap-8);
+        const placeAbove=below<180 && above>below;
+        const available=placeAbove?above:below;
+        const maxHeight=Math.max(100,Math.min(Math.floor(viewHeight*0.72),available));
+        const width=Math.min(rectWidth,Math.max(0,viewWidth-16));
+        const left=Math.max(8,Math.min(rectLeft,viewWidth-width-8));
+        results.style.position='fixed';
+        results.style.left=`${left}px`;
+        results.style.right='auto';
+        results.style.top=placeAbove?`${Math.max(8,rectTop-maxHeight-gap)}px`:`${rectBottom+gap}px`;
+        results.style.width=`${width}px`;
+        results.style.maxHeight=`${maxHeight}px`;
+        results.style.marginTop='0';
+        results.style.zIndex='2147483647';
+        results.style.overflowY='auto';
+        results.style.overscrollBehavior='contain';
+        results.style.backgroundColor='#ffffff';
+        results.style.pointerEvents='auto';
+        results.style.boxSizing='border-box';
+    }
+
+    function openFeeLookupResults_() {
+        const results=document.getElementById('feeLookupResults');
+        if(!results) return;
+        if(results.parentElement!==document.body) document.body.appendChild(results);
+        results.classList.remove('hidden');
+        positionFeeLookupResults_();
+    }
+
+    window.addEventListener('resize',positionFeeLookupResults_);
+    window.addEventListener('scroll',positionFeeLookupResults_,true);
+    document.addEventListener('click',function(event){
+        if(event.target.closest('#feeLookupSearch')||event.target.closest('#feeLookupResults')) return;
+        const results=document.getElementById('feeLookupResults');
+        if(results) results.classList.add('hidden');
+    });
 
     function lookupStudentFees_() {
         const input=document.getElementById('feeLookupSearch');
@@ -6728,9 +6874,9 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             const hay=[st.name,st.id,st.rollNo,c,st.father,st.contact,st.whatsapp].filter(Boolean).join(' ').toLowerCase();
             if(hay.includes(q)) matches.push({c,st});
         }));
-        if(!matches.length){ results.innerHTML='<div class="px-3 py-3 text-sm text-gray-500">No matching student found.</div>'; results.classList.remove('hidden'); return; }
-        results.innerHTML=matches.slice(0,30).map(({c,st})=>`<button type="button" class="w-full text-left px-3 py-2 border-b last:border-b-0 hover:bg-yellow-50 text-sm" onclick="showStudentFeeSummary_('${escFee(c)}','${escFee(String(st.id))}')"><b>${escFee(st.name||'Unnamed')}</b> <span class="text-gray-500">| ${escFee(c)} | Roll: ${escFee(st.rollNo||'N/A')}</span><br><span class="text-xs text-gray-500">ID: ${escFee(st.id||'')} | Father/Guardian: ${escFee(st.father||'')}</span></button>`).join('');
-        results.classList.remove('hidden');
+        if(!matches.length){ results.innerHTML='<div class="px-3 py-3 text-sm text-gray-500">No matching student found.</div>'; openFeeLookupResults_(); return; }
+        results.innerHTML=matches.map(({c,st})=>`<button type="button" class="w-full text-left px-3 py-2 border-b last:border-b-0 hover:bg-yellow-50 text-sm" onclick="showStudentFeeSummary_('${escFee(c)}','${escFee(String(st.id))}')"><b>${escFee(st.name||'Unnamed')}</b> <span class="text-gray-500">| ${escFee(c)} | Roll: ${escFee(st.rollNo||'N/A')}</span><br><span class="text-xs text-gray-500">ID: ${escFee(st.id||'')} | Father/Guardian: ${escFee(st.father||'')}</span></button>`).join('');
+        openFeeLookupResults_();
     }
 
     // Tracks which student is currently shown in the Fee tab's search/summary panel,
@@ -6743,8 +6889,8 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         const records=(db.fees||[]).filter(f=>
             String(f.studentId||f.student_id||'')===String(studentId) &&
             String(f.class||f.className||'')===String(className) &&
-            String(f.month||'')===String(month||'') &&
-            String(f.academicYear||f.academic_year||'')===String(academicYear||'') &&
+            normalizeFeeMonthKey_(f.month)===normalizeFeeMonthKey_(month) &&
+            feeAcademicYearKey_(f.academicYear||f.academic_year,f.month)===feeAcademicYearKey_(academicYear,month) &&
             (f.feeType||'Monthly')===wantType
         );
         if(!records.length) return null;
@@ -6760,8 +6906,8 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         return (db.fees||[]).filter(f=>
             String(f.studentId||f.student_id||'')===String(studentId) &&
             String(f.class||f.className||'')===String(className) &&
-            String(f.month||'')===String(month||'') &&
-            String(f.academicYear||f.academic_year||'')===String(academicYear||'') &&
+            normalizeFeeMonthKey_(f.month)===normalizeFeeMonthKey_(month) &&
+            feeAcademicYearKey_(f.academicYear||f.academic_year,f.month)===feeAcademicYearKey_(academicYear,month) &&
             (f.feeType||'Monthly')===wantType
         );
     }
@@ -6778,9 +6924,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             feeDueValue(f)>0
         );
         return items.slice().sort((a,b)=>{
-            const ak=`${a.academicYear||''}|${String(FEE_MONTHS.indexOf(a.month)).padStart(2,'0')}`;
-            const bk=`${b.academicYear||''}|${String(FEE_MONTHS.indexOf(b.month)).padStart(2,'0')}`;
-            return ak.localeCompare(bk);
+            return feePeriodKey_(a)-feePeriodKey_(b) || String(a.feeType||'').localeCompare(String(b.feeType||''));
         });
     }
 
@@ -6800,10 +6944,11 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         const records=currentRecords.length ? currentRecords : allRecords;
         const logicalRecords=currentRecords.length ? [getStudentMonthFeeRecord_(className,studentId,currentMonth,currentYear)] : allRecords;
         const total=logicalRecords.reduce((n,f)=>n+feeAmountValue(f),0);
+        const discountTotal=logicalRecords.reduce((n,f)=>n+Math.max(0,Number(f.discount||0)),0);
         const paid=logicalRecords.reduce((n,f)=>n+feePaidValue(f),0);
         const due=logicalRecords.reduce((n,f)=>n+feeDueValue(f),0);
-        const latest=logicalRecords.slice().sort((a,b)=>String(b.paymentDate||b.date||'').localeCompare(String(a.paymentDate||a.date||'')))[0];
-        const status=latest ? normalizeFeeStatus(latest.status,feeAmountValue(latest),feePaidValue(latest)) : 'Unpaid';
+        const latest=latestFeeRecord_(logicalRecords);
+        const status=latest ? feeRecordStatus_(latest) : 'Unpaid';
         // Pending Balance: total outstanding across EVERY fee head (Monthly/
         // Admission/Transport) and EVERY month on file — a real running
         // balance, not just this one month's figure.
@@ -6817,13 +6962,13 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             </div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div class="bg-blue-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Total Fee</div><div class="text-lg font-bold text-blue-600">₨ ${total.toLocaleString()}</div></div>
+            <div class="bg-blue-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Total Fee</div><div class="text-lg font-bold text-blue-600">₨ ${total.toLocaleString()}</div>${discountTotal>0?`<div class="text-[10px] font-bold text-purple-600">Discount: ₨ ${discountTotal.toLocaleString()}</div>`:''}</div>
             <div class="bg-green-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Paid</div><div class="text-lg font-bold text-green-600">₨ ${paid.toLocaleString()}</div></div>
             <div class="bg-red-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Due</div><div class="text-lg font-bold text-red-600">₨ ${due.toLocaleString()}</div></div>
             <div class="bg-orange-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Pending Balance (All Heads)</div><div class="text-lg font-bold text-orange-600">₨ ${pendingBalance.toLocaleString()}</div></div>
             <div class="bg-gray-50 rounded-xl p-3"><div class="text-[10px] text-gray-500 font-bold uppercase">Status</div><div class="text-lg font-bold">${escFee(status)}</div></div>
         </div>
-        <div class="mt-3 text-xs text-gray-500">${currentRecords.length ? `Current month (${escFee(currentMonth)} ${escFee(currentYear)}): ${escFee(status)}${currentRecords.length>1 ? ` • ${currentRecords.length} duplicate record(s) already exist; new payments are blocked and the latest record is used.` : ''}.` : (records.length ? `${records.length} fee record(s) found${latest ? ` • Latest: ${escFee(latest.month||latest.date||'')}` : ''}.` : 'No fee record found for this student yet.')}</div>
+        <div class="mt-3 text-xs text-gray-500">${currentRecords.length ? `Current month (${escFee(currentMonth)} ${escFee(feeAcademicYearDisplay_(currentYear))}): ${escFee(status)}${currentRecords.length>1 ? ` • ${currentRecords.length} duplicate record(s) already exist; new payments are blocked and the latest record is used.` : ''}.` : (records.length ? `${records.length} fee record(s) found${latest ? ` • Latest: ${escFee(latest.month||latest.date||'')}` : ''}.` : 'No fee record found for this student yet.')}</div>
         ${renderCollectFeeTable_(className,studentId)}
         ${renderStudentFeeRecordsTable_(allRecords)}`;
         summary.classList.remove('hidden');
@@ -6838,13 +6983,20 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             return `<div class="mt-4 border-t pt-3"><div class="text-sm font-bold text-green-700"><i class="fa-solid fa-circle-check mr-1"></i> No outstanding balance for this student.</div></div>`;
         }
         const rows = items.map(f => {
+            const amount = feeAmountValue(f);
+            const paid = feePaidValue(f);
             const netDue = feeDueValue(f);
+            const maxDiscount = Math.max(0, amount - paid);
+            const savedDiscount = Math.max(0, Math.min(maxDiscount, Number(f.discount||0)));
             return `<tr data-fee-row="${f.id}" class="border-b border-gray-100">
                 <td class="py-2 px-2 text-center"><input type="checkbox" class="cf-check" data-fee-id="${f.id}" checked onchange="updateCollectFeeGrandTotal_()"></td>
                 <td class="py-2 px-2 text-left font-semibold">${escFee(f.feeType||'Monthly')}</td>
-                <td class="py-2 px-2 text-left">${escFee(f.month)} ${escFee(f.academicYear||'')}</td>
+                <td class="py-2 px-2 text-left">${escFee(f.month)} ${escFee(feeAcademicYearDisplay_(f.academicYear||f.academic_year||''))}</td>
                 <td class="py-2 px-2 text-center">₨ ${netDue.toLocaleString()}</td>
-                <td class="py-2 px-2 text-center"><input type="number" min="0" max="${netDue}" value="${Number(f.discount||0)}" class="cf-discount w-20 border rounded px-1 py-0.5 text-center" data-fee-id="${f.id}" data-base-due="${netDue}" onchange="updateCollectFeeRow_('${f.id}')"></td>
+                <td class="py-2 px-2 text-center whitespace-nowrap">
+                    <input type="number" min="0" max="${maxDiscount}" value="${savedDiscount}" class="cf-discount w-20 border rounded px-1 py-0.5 text-center" data-fee-id="${f.id}" data-base-amount="${amount}" data-paid-amount="${paid}" onchange="updateCollectFeeRow_('${f.id}')">
+                    <button type="button" onclick="saveCollectFeeDiscount_('${escFee(className)}','${escFee(studentId)}','${escFee(String(f.id))}')" class="ml-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold px-2 py-1 rounded" title="Save discount only">Save</button>
+                </td>
                 <td class="py-2 px-2 text-center"><input type="number" min="0" max="${netDue}" value="${netDue}" class="cf-pay w-24 border rounded px-1 py-0.5 text-center font-bold" data-fee-id="${f.id}" onchange="updateCollectFeeGrandTotal_()"></td>
             </tr>`;
         }).join('');
@@ -6869,19 +7021,75 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         </div>`;
     }
 
-    // Discount changed on one row: recompute that row's default Pay amount
-    // (balance minus discount), then refresh the grand total.
+    // Discount changed on one row: recompute from the original fee amount,
+    // current saved paid amount, and proposed total discount (never double-discount).
     function updateCollectFeeRow_(feeId) {
         const discountInput = document.querySelector(`.cf-discount[data-fee-id="${feeId}"]`);
         const payInput = document.querySelector(`.cf-pay[data-fee-id="${feeId}"]`);
         if (!discountInput || !payInput) return;
-        const baseDue = Number(discountInput.dataset.baseDue || 0);
-        const discount = Math.max(0, Math.min(baseDue, Number(discountInput.value) || 0));
+        const amount = Number(discountInput.dataset.baseAmount || 0);
+        const paid = Number(discountInput.dataset.paidAmount || 0);
+        const maxDiscount = Math.max(0, amount - paid);
+        const typedDiscount = Number(discountInput.value) || 0;
+        const discount = Math.max(0, Math.min(maxDiscount, typedDiscount));
+        if (typedDiscount > maxDiscount) showToast(`Discount cannot be more than the remaining balance. Set to the maximum: Rs ${maxDiscount.toLocaleString()}.`, 'warning');
         discountInput.value = discount;
-        const netPayable = Math.max(0, baseDue - discount);
+        const netPayable = Math.max(0, amount - discount - paid);
         payInput.max = netPayable;
         payInput.value = netPayable;
         updateCollectFeeGrandTotal_();
+    }
+
+    // Save a discount to the existing fee row only. This deliberately does not
+    // create/update a fee_payments history row and does not change payment date.
+    let feeDiscountSaveBusy_ = false;
+    async function saveCollectFeeDiscount_(className, studentId, feeId) {
+        if (currentUser?.role === 'Teacher') { showToast('Only admin can save fee discounts', 'error'); return; }
+        if (feeDiscountSaveBusy_) { showToast('A discount save is already in progress — please wait', 'warning'); return; }
+        const student = (db.students?.[className] || []).find(s => String(s.id) === String(studentId));
+        const fee = (db.fees || []).find(f => String(f.id) === String(feeId) && String(f.studentId||f.student_id||'') === String(studentId) && String(f.class||f.className||'') === String(className));
+        const input = document.querySelector(`.cf-discount[data-fee-id="${feeId}"]`);
+        if (!student || !fee || !input) { showToast('Student or fee record not found. Please search the student again.', 'error'); return; }
+        const amount = feeAmountValue(fee);
+        const paid = feePaidValue(fee);
+        const maxDiscount = Math.max(0, amount - paid);
+        const rawDiscount = Number(input.value);
+        if (!Number.isFinite(rawDiscount) || rawDiscount < 0 || rawDiscount > maxDiscount) {
+            showToast(`Discount must be between Rs 0 and Rs ${maxDiscount.toLocaleString()}.`, 'error'); return;
+        }
+        const before = clone_(fee);
+        const discount = rawDiscount;
+        const expectedDue = Math.max(0, amount - discount - paid);
+        const expectedStatus = expectedDue <= 0 ? 'Paid' : (paid > 0 ? 'Partial' : 'Unpaid');
+        if (Number(fee.discount||0) === discount && feeDueValue(fee) === expectedDue && normalizeFeeStatus(fee.status, amount, paid) === expectedStatus) {
+            showToast('This discount is already saved. No payment was recorded.', 'info'); return;
+        }
+        if (discount > 0 && expectedDue <= 0) {
+            if (!confirm(`This discount (Rs ${discount.toLocaleString()}) waives the ENTIRE remaining balance.\n\nFee: Rs ${amount.toLocaleString()}\nAlready paid: Rs ${paid.toLocaleString()}\nDiscount: Rs ${discount.toLocaleString()}\n\nThe fee will be marked PAID and nothing more will be collected. Continue?`)) return;
+        }
+        feeDiscountSaveBusy_ = true;
+        try {
+            fee.discount = discount;
+            fee.dueAmount = expectedDue;
+            fee.status = expectedStatus;
+            const saved = await queueFastSave_(() => saveFeeFast_(fee, 'save fee discount only'));
+            if (!saved) {
+                restoreFeeState_(fee, before);
+                showStudentFeeSummary_(className, studentId);
+                showToast('Discount was NOT saved online. No payment was recorded.', 'error');
+                return;
+            }
+            student.feeStatus = getStudentEffectiveFeeStatus_(student, className);
+            showStudentFeeSummary_(className, studentId);
+            showToast(`Discount saved for ${student.name}. No payment or payment-history entry was created.`, 'success');
+        } catch (error) {
+            restoreFeeState_(fee, before);
+            showStudentFeeSummary_(className, studentId);
+            console.error('Save discount only failed:', error);
+            showToast('Discount was NOT saved: ' + (error.message || error), 'error');
+        } finally {
+            feeDiscountSaveBusy_ = false;
+        }
     }
 
     function updateCollectFeeGrandTotal_() {
@@ -6918,13 +7126,15 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 if (!fee) continue;
                 const discountInput = document.querySelector(`.cf-discount[data-fee-id="${feeId}"]`);
                 const payInput = document.querySelector(`.cf-pay[data-fee-id="${feeId}"]`);
-                const discount = Math.max(0, Number(discountInput?.value) || 0);
+                const rawDiscount = Math.max(0, Number(discountInput?.value) || 0);
                 const pay = Math.max(0, Number(payInput?.value) || 0);
-                if (pay <= 0 && discount <= 0) continue;
+                if (pay <= 0) continue;
                 const before = clone_(fee);
                 const amount = feeAmountValue(fee);
-                const netPayable = Math.max(0, amount - discount);
                 const priorPaid = feePaidValue(fee);
+                // Discount can never exceed what is still unpaid, so a payment can never lower paidAmount.
+                const discount = Math.min(rawDiscount, Math.max(0, amount - priorPaid));
+                const netPayable = Math.max(0, amount - discount);
                 // Never let a payment push the record past what's actually payable.
                 const newPaid = Math.min(netPayable, priorPaid + pay);
                 const newDue = Math.max(0, netPayable - newPaid);
@@ -6969,7 +7179,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
     function printFeePaymentInvoice_(student, className, paidItems, method, date, receivedBy) {
         const receiptNo = paidItems[0]?.fee?.receiptNumber || generateReceiptNumber();
         const rows = paidItems.map(({fee, paidNow}) => `<tr>
-                <td style="padding:8px;border:1px solid #999;">${escFee(fee.feeType||'Monthly')} Fee — ${escFee(fee.month)} ${escFee(fee.academicYear||'')}</td>
+                <td style="padding:8px;border:1px solid #999;">${escFee(fee.feeType||'Monthly')} Fee — ${escFee(fee.month)} ${escFee(feeReportYearOnly_(fee.academicYear||fee.academic_year||''))}</td>
                 <td style="padding:8px;border:1px solid #999;text-align:right;">${Number(fee.discount||0).toLocaleString()}</td>
                 <td style="padding:8px;border:1px solid #999;text-align:right;">${Math.max(0,paidNow).toLocaleString()}</td>
             </tr>`).join('');
@@ -7021,7 +7231,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             const isDup = counts[`${f.month}|${f.academicYear||''}|${f.feeType||'Monthly'}`] > 1;
             return `<tr class="border-b border-gray-100 ${isDup ? 'bg-red-50' : ''}">
                 <td class="py-1.5 px-2 text-left font-semibold">${escFee(f.feeType||'Monthly')}</td>
-                <td class="py-1.5 px-2 text-left">${escFee(f.month)} ${escFee(f.academicYear||'')}${isDup ? ' <span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded-full font-bold ml-1 align-middle">DUPLICATE</span>' : ''}</td>
+                <td class="py-1.5 px-2 text-left">${escFee(f.month)} ${escFee(feeAcademicYearDisplay_(f.academicYear||f.academic_year||''))}${isDup ? ' <span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded-full font-bold ml-1 align-middle">DUPLICATE</span>' : ''}</td>
                 <td class="py-1.5 px-2 text-center">₨ ${amount.toLocaleString()}</td>
                 <td class="py-1.5 px-2 text-center">₨ ${paid.toLocaleString()}</td>
                 <td class="py-1.5 px-2 text-center">₨ ${due.toLocaleString()}</td>
@@ -7090,8 +7300,9 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         syncFeeStudentInfo();
     }
     function syncFeeStudentInfo(){ const v=document.getElementById('feeStudent').value; if(!v)return; const [c,id]=v.split('|'); const s=db.students?.[c]?.find(x=>x.id===id); if(!s)return; document.getElementById('feeRollNo').value=s.rollNo||''; document.getElementById('feeClass').value=c; document.getElementById('feeFather').value=s.father||''; }
-    function updateFeeDuePreview(){ const a=Number(document.getElementById('feeAmount').value)||0,p=Number(document.getElementById('feePaidAmount').value)||0; document.getElementById('feeDueAmount').value=Math.max(0,a-p); }
-    function syncPaidAmountFromStatus(){ const a=Number(document.getElementById('feeAmount').value)||0,s=document.getElementById('feeStatus').value; if(s==='Paid')document.getElementById('feePaidAmount').value=a; else if(s==='Unpaid')document.getElementById('feePaidAmount').value=0; updateFeeDuePreview(); }
+    function feeModalDiscount_(){ const id=document.getElementById('feeEditingId')?.value; const f=id?(db.fees||[]).find(x=>x.id===id):null; return Math.max(0,Number(f?.discount||0)); }
+    function updateFeeDuePreview(){ const a=Number(document.getElementById('feeAmount').value)||0,p=Number(document.getElementById('feePaidAmount').value)||0; const d=Math.min(feeModalDiscount_(),a); document.getElementById('feeDueAmount').value=Math.max(0,a-d-p); }
+    function syncPaidAmountFromStatus(){ const a=Number(document.getElementById('feeAmount').value)||0,s=document.getElementById('feeStatus').value; if(s==='Paid')document.getElementById('feePaidAmount').value=Math.max(0,a-Math.min(feeModalDiscount_(),a)); else if(s==='Unpaid')document.getElementById('feePaidAmount').value=0; updateFeeDuePreview(); }
     function addTuitionFee(){
         const lookedUp = currentFeeLookupStudent_ && db.students?.[currentFeeLookupStudent_.className]?.find(x=>String(x.id)===String(currentFeeLookupStudent_.studentId));
         const currentMonth=FEE_MONTHS[new Date().getMonth()], currentYear=getCurrentAcademicYear();
@@ -7160,21 +7371,92 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
 
     function feeAcademicYearDisplay_(value) { const m=String(value||'').match(/\d{4}/); return m ? m[0] : String(new Date().getFullYear()); }
     function prepareFeeAcademicYearDisplay_(value) { const el=document.getElementById('feeAcademicYear'); if(!el) return; const raw=String(value||'').trim() || getCurrentAcademicYear(); el.dataset.fullYear=raw; el.value=feeAcademicYearDisplay_(raw); }
+    // ---- Fee Increase setting is stored ONLINE (school_data.settings.feeIncrease) so every device/browser uses the same one ----
+    async function readSchoolDataRow_(){ const rows=await supabaseTableRequest('school_data',{query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&select=data&limit=1`}); return (Array.isArray(rows)&&rows[0]?.data&&typeof rows[0].data==='object')?rows[0].data:{}; }
+    function stableJson_(v){ if(v===null||v===undefined||typeof v!=='object') return JSON.stringify(v===undefined?null:v); if(Array.isArray(v)) return '['+v.map(stableJson_).join(',')+']'; return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+stableJson_(v[k])).join(',')+'}'; }
+    let feeIncreaseLastError_='';
+    function feeIncreaseFailNote_(){ return feeIncreaseLastError_?(' (Reason: '+feeIncreaseLastError_+')'):''; }
+    async function persistFeeIncreaseOnline_(cfg){
+        feeIncreaseLastError_='';
+        try{
+            for(let attempt=0;attempt<2;attempt++){
+                const data=await readSchoolDataRow_();
+                data.settings={...(data.settings||{}),feeIncrease:cfg};
+                await supabaseTableRequest('school_data',{method:'POST',query:'?on_conflict=school_id',headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify([{school_id:SUPABASE_SCHOOL_ID,data,updated_at:new Date().toISOString()}])});
+                const verify=await readSchoolDataRow_();
+                if(stableJson_(verify.settings?.feeIncrease??null)===stableJson_(cfg??null)) return true;
+                feeIncreaseLastError_='saved value could not be confirmed on read-back';
+            }
+        }catch(e){ console.error('Fee Increase online save failed:',e); feeIncreaseLastError_=String(e?.message||e).slice(0,160); }
+        return false;
+    }
+    // Pull the online Fee Increase setting into this browser. Returns false only if it could not be read.
+    async function syncFeeIncreaseFromOnline_(){
+        try{
+            const data=await readSchoolDataRow_();
+            const st=data.settings||{};
+            const has=Object.prototype.hasOwnProperty.call(st,'feeIncrease');
+            if(has&&st.feeIncrease&&typeof st.feeIncrease==='object'){ AppStorage.set('fee_increase_settings',JSON.stringify(st.feeIncrease)); }
+            else if(has){ AppStorage.remove('fee_increase_settings'); const el=document.getElementById('feeIncreaseStatus'); if(el) el.textContent='No increase setting saved.'; }
+            else { const local=feeIncreaseSettings_(); if(local) await persistFeeIncreaseOnline_(local); }
+            if(typeof initFeeIncreasePanel_==='function') initFeeIncreasePanel_();
+            return true;
+        }catch(e){ console.error('Fee Increase online sync failed:',e); return false; }
+    }
+    function feeIncreaseSettings_(){ try{return JSON.parse(AppStorage.get('fee_increase_settings')||'null');}catch(_){return null;} }
+    function feeIncreaseScopeChanged_(){
+        const scope=document.getElementById('feeIncreaseScope')?.value||'all';
+        document.getElementById('feeIncreaseClassWrap')?.classList.toggle('hidden',!['class','section','student'].includes(scope));
+        document.getElementById('feeIncreaseSectionWrap')?.classList.toggle('hidden',scope!=='section');
+        document.getElementById('feeIncreaseStudentWrap')?.classList.toggle('hidden',scope!=='student');
+        const cls=document.getElementById('feeIncreaseClass'); if(cls && !cls.dataset.ready){const names=Array.isArray(FEE_CLASSES)&&FEE_CLASSES.length?FEE_CLASSES:Object.keys(db.students||{});cls.innerHTML=names.map(c=>`<option value="${escFee(c)}">${escFee(c)}</option>`).join('');cls.dataset.ready='1';}
+        const st=document.getElementById('feeIncreaseStudent'); if(st){const c=cls?.value||Object.keys(db.students||{})[0]||'';st.innerHTML=(db.students?.[c]||[]).map(x=>`<option value="${escFee(String(x.id||''))}">${escFee(x.name||'Student')} — ${escFee(x.rollNo||x.admissionNo||'')}</option>`).join('');}
+    }
+    function saveFeeIncreaseSettings_(){
+        if(!isSuperAdminUser_()){showToast('Only Super Admin can change Fee Increase settings','error');return;}
+        const type=document.getElementById('feeIncreaseType')?.value||'fixed',value=Number(document.getElementById('feeIncreaseValue')?.value||0),month=document.getElementById('feeIncreaseMonth')?.value||'January',scope=document.getElementById('feeIncreaseScope')?.value||'all',className=document.getElementById('feeIncreaseClass')?.value||'',section=(document.getElementById('feeIncreaseSection')?.value||'').trim(),studentId=document.getElementById('feeIncreaseStudent')?.value||'';
+        if(!Number.isFinite(value)||value<=0){showToast('Enter a Fee Increase value greater than zero','warning');return;}
+        if(['class','section','student'].includes(scope)&&!className){showToast('Select a class for this Fee Increase','warning');return;}
+        if(scope==='section'&&!section){showToast('Enter the exact section name','warning');return;}
+        if(scope==='student'&&!studentId){showToast('Select a student','warning');return;}
+        const cfg={type,value,month,scope,className,section,studentId,effectiveYear:Number(String(getCurrentAcademicYear()).match(/\d{4}/)?.[0]||new Date().getFullYear()),savedAt:todayLocal_()};
+        AppStorage.set('fee_increase_settings',JSON.stringify(cfg)); const el=document.getElementById('feeIncreaseStatus');if(el)el.textContent=`Saved: ${type==='percent'?value+'%':'₨ '+value} from ${month}.`;persistFeeIncreaseOnline_(cfg).then(ok=>showToast(ok?'Fee Increase setting saved online. It applies only to NEW monthly challans from the effective month.':'⚠️ Saved on THIS device only — could not save online. Challans generated from another device would NOT include this increase.'+feeIncreaseFailNote_()+' Please press Save again.',ok?'success':'warning'));
+    }
+    function clearFeeIncreaseSettings_(){if(!isSuperAdminUser_()){showToast('Only Super Admin can change Fee Increase settings','error');return;}AppStorage.remove('fee_increase_settings');const el=document.getElementById('feeIncreaseStatus');if(el)el.textContent='No increase setting saved.';persistFeeIncreaseOnline_(null).then(ok=>showToast(ok?'Fee Increase setting cleared':'⚠️ Cleared on this device only — could not clear online.'+feeIncreaseFailNote_()+' Press Clear again.',ok?'success':'warning'));}
+    function feeIncreaseApplies_(cfg,student,className,month,academicYear){
+        if(!cfg)return false; const months=FEE_MONTHS,mi=months.indexOf(month),ei=months.indexOf(cfg.month);const year=Number(String(academicYear||'').match(/\d{4}/)?.[0]||new Date().getFullYear());if(mi<0||ei<0||year<Number(cfg.effectiveYear||year)||(year===Number(cfg.effectiveYear||year)&&mi<ei))return false;
+        if(cfg.scope==='class'&&String(className)!==String(cfg.className))return false;
+        if(cfg.scope==='section'&&(String(className)!==String(cfg.className)||String(student.section||student.sectionName||'').trim().toLowerCase()!==String(cfg.section||'').trim().toLowerCase()))return false;
+        if(cfg.scope==='student'&&(String(className)!==String(cfg.className)||String(student.id)!==String(cfg.studentId)))return false;return true;
+    }
+    function applyFeeIncrease_(amount,student,className,month,academicYear){const cfg=feeIncreaseSettings_();if(!feeIncreaseApplies_(cfg,student,className,month,academicYear))return amount;const inc=cfg.type==='percent'?amount*(Number(cfg.value)||0)/100:Number(cfg.value)||0;return Math.max(0,Math.round((amount+inc)*100)/100);}
+
     async function generateMonthlyFeeChallans_() {
-        if(currentUser?.role==='Teacher'){ showToast('Only admin can generate monthly challans','error'); return; }
+        if(!isSuperAdminUser_()){ showToast('Only Super Admin can generate monthly challans','error'); return; }
         if(!navigator.onLine || !databaseLoadedFromSupabase){ showToast('Internet connection and loaded Supabase data are required. No challans were generated.','error'); return; }
+        if(!(await syncFeeIncreaseFromOnline_())){ showToast('Could not read the online Fee Increase setting. No challans were generated — please try again.','error'); return; }
         const monthEl=document.getElementById('feeMonthlyChallanMonth'); if(monthEl && !monthEl.dataset.initialized){ monthEl.value=FEE_MONTHS[new Date().getMonth()]; monthEl.dataset.initialized='1'; }
-        const month=monthEl?.value || FEE_MONTHS[new Date().getMonth()]; const academicYear=getCurrentAcademicYear();
+        const month=monthEl?.value || FEE_MONTHS[new Date().getMonth()]; const sessionEl=document.getElementById('feeMonthlyChallanSession'); const academicYear=sessionEl?.value==='previous' ? (()=>{const y=new Date().getFullYear()-1;return `${y}-${String(y+1).slice(-2)}`;})() : getCurrentAcademicYear(); const classEl=document.getElementById('feeMonthlyChallanClass'); const selectedClass=classEl?.value || '__all__';
         const existingKeys=new Set((db.fees||[]).map(f=>`${String(f.studentId||f.student_id||'')}|${String(f.class||f.className||'')}|${normalizeFeeMonthKey_(f.month)}|${feeAcademicYearKey_(f.academicYear||f.academic_year,f.month)}|${f.feeType||'Monthly'}`));
-        const pending=[]; const classes=Array.isArray(FEE_CLASSES)&&FEE_CLASSES.length?FEE_CLASSES:Object.keys(db.students||{});
+        const pending=[]; let noFeeCount=0; const allClasses=Array.isArray(FEE_CLASSES)&&FEE_CLASSES.length?FEE_CLASSES:Object.keys(db.students||{}); const classes=selectedClass==='__all__'?allClasses:allClasses.filter(c=>String(c)===String(selectedClass));
         classes.forEach(className=>(db.students?.[className]||[]).forEach(student=>{
             const key=`${String(student.id||'')}|${String(className)}|${normalizeFeeMonthKey_(month)}|${academicYear}|Monthly`; if(existingKeys.has(key)) return;
-            const prior=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student.id||'') && String(f.class||f.className||'')===String(className) && (f.feeType||'Monthly')==='Monthly');
-            prior.sort((a,b)=>String(b.paymentDate||b.date||b.id||'').localeCompare(String(a.paymentDate||a.date||a.id||''))); const amount=Number(prior[0]?feeAmountValue(prior[0]):(parseInt(AppStorage.get('default_fee'))||0)); if(amount<=0) return;
+            // Previous Monthly fee of this student: the latest month BEFORE the one being generated (by month, not by payment date).
+            const prior=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student.id||'') && String(f.class||f.className||'')===String(className) && (f.feeType||'Monthly')==='Monthly' && feeAmountValue(f)>0);
+            const periodOf=f=>({y:Number(String(feeAcademicYearKey_(f.academicYear||f.academic_year,f.month)).match(/\d{4}/)?.[0]||0),m:FEE_MONTHS.indexOf(normalizeFeeMonthKey_(f.month))});
+            const cmpP=(a,b)=>(a.y-b.y)||(a.m-b.m);
+            const target={y:Number(String(academicYear).match(/\d{4}/)?.[0]||0),m:FEE_MONTHS.indexOf(month)};
+            prior.sort((a,b)=>cmpP(periodOf(b),periodOf(a))||String(b.paymentDate||b.date||b.id||'').localeCompare(String(a.paymentDate||a.date||a.id||'')));
+            const chosen=prior.find(f=>cmpP(periodOf(f),target)<0)||prior[0]||null;
+            const baseAmount=chosen?feeAmountValue(chosen):(parseInt(AppStorage.get('default_fee'))||0);
+            // If the previous fee already carries the increase, carry it forward as-is; otherwise apply the increase ONCE. (No compounding, nothing extra stored.)
+            const alreadyIncreased=!!chosen&&(cmpP(periodOf(chosen),target)>0||feeIncreaseApplies_(feeIncreaseSettings_(),student,className,normalizeFeeMonthKey_(chosen.month),chosen.academicYear||chosen.academic_year));
+            const amount=alreadyIncreased?baseAmount:applyFeeIncrease_(baseAmount,student,className,month,academicYear); if(amount<=0){ noFeeCount++; return; }
             pending.push({id:'f_'+Math.random().toString(36).slice(2,10),studentId:student.id,studentName:student.name||'',class:className,rollNo:student.rollNo||'',fatherGuardianName:student.father||'',month,academicYear,feeType:'Monthly',feeAmount:amount,amount,paidAmount:0,dueAmount:amount,status:'Unpaid',paymentDate:todayLocal_(),date:todayLocal_(),receiptNumber:generateReceiptNumber()}); existingKeys.add(key);
         }));
-        if(!pending.length){ showToast(`All students already have a Monthly Fee challan for ${month}.`,'warning'); return; }
-        if(!confirm(`Generate Monthly Fee challans for ${month} ${feeAcademicYearDisplay_(academicYear)}?\n\n${pending.length} students will get a challan.\n\nIf this is the wrong month, use "Delete Monthly Challans" afterwards.`)) return;
+        if(!pending.length){ showToast(noFeeCount?`No new challans: ${noFeeCount} student(s) have no previous fee and no Default Fee is set (Settings).`:`All students already have a Monthly Fee challan for ${month}.`,'warning'); return; }
+        const incCfg_=feeIncreaseSettings_(); const incLine_=incCfg_?`Fee Increase: ${incCfg_.type==='percent'?incCfg_.value+'%':'Rs. '+incCfg_.value} from ${incCfg_.month} (${incCfg_.scope})`:'Fee Increase: none';
+        const totalAmount=pending.reduce((sum,f)=>sum+Number(f.feeAmount||f.amount||0),0); if(!confirm(`MONTHLY CHALLAN PREVIEW\n\nSession: ${feeAcademicYearDisplay_(academicYear)}\nMonth: ${month}\nClass: ${selectedClass==='__all__'?'All Classes':selectedClass}\nNew challans: ${pending.length}\nTotal amount: Rs. ${totalAmount.toLocaleString()}\n${incLine_}\n${noFeeCount?`Skipped (no previous fee / no Default Fee): ${noFeeCount}\n`:''}\nProceed with generation? Please verify session, month, class and totals before confirming.`)) return;
         try { await upsertRows_('fees',pending.map(feeToRow)); db.fees.push(...pending); pending.forEach(f=>{const st=db.students?.[f.class]?.find(x=>String(x.id)===String(f.studentId)); if(st) st.feeStatus=getStudentEffectiveFeeStatus_(st,f.class);}); loadFees(); showToast(`✅ ${pending.length} Monthly Fee challans generated for ${month} ${feeAcademicYearDisplay_(academicYear)}.`,'success'); } catch(e){ console.error('Monthly challan generation failed:',e); showToast('❌ Monthly challans were NOT generated: '+(e.message||e),'error'); }
     }
 
@@ -7182,11 +7464,11 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
     // Moves every UNPAID Monthly challan of the selected month (current academic year) to Trash in one go.
     // Paid or partly-paid records are never touched. Restorable from the Trash tab.
     async function deleteMonthlyFeeChallans_() {
-        if (currentUser?.role === 'Teacher') { showToast('Only admin can delete monthly challans', 'error'); return; }
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can delete monthly challans', 'error'); return; }
         if (!navigator.onLine || !databaseLoadedFromSupabase) { showToast('Internet connection and loaded Supabase data are required. Nothing was deleted.', 'error'); return; }
         const monthEl = document.getElementById('feeMonthlyChallanMonth');
         const month = monthEl?.value || FEE_MONTHS[new Date().getMonth()];
-        const academicYear = getCurrentAcademicYear();
+        const sessionEl = document.getElementById('feeMonthlyChallanSession'); const academicYear = sessionEl?.value==='previous' ? (()=>{const y=new Date().getFullYear()-1;return `${y}-${String(y+1).slice(-2)}`;})() : getCurrentAcademicYear();
         const wantMonth = normalizeFeeMonthKey_(month), wantYear = feeAcademicYearKey_(academicYear, month);
         const sameMonth = (db.fees || []).filter(f => (f.feeType || 'Monthly') === 'Monthly'
             && normalizeFeeMonthKey_(f.month) === wantMonth
@@ -7221,7 +7503,12 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
     async function saveFee(){
         const v=document.getElementById('feeStudent').value; if(!v){showToast('Please select a student','error');return;} const [c,id]=v.split('|'); const s=db.students?.[c]?.find(x=>x.id===id); if(!s){showToast('Student not found','error');return;}
         const amount=Number(document.getElementById('feeAmount').value)||0, paid=Math.max(0,Number(document.getElementById('feePaidAmount').value)||0); if(amount<=0){showToast('Please enter a valid fee amount','error');return;} if(paid>amount){showToast('Paid amount cannot exceed fee amount','error');return;}
-        let status=normalizeFeeStatus(document.getElementById('feeStatus').value,amount,paid); if(paid>=amount)status='Paid'; else if(paid>0)status='Partial'; else status='Unpaid';
+        // Keep any discount already saved on this record (it was being dropped from Due on every edit).
+        const editingFeeId_=document.getElementById('feeEditingId').value; const editingFee_=(db.fees||[]).find(f=>f.id===editingFeeId_);
+        const discount=editingFee_?Math.min(Math.max(0,Number(editingFee_.discount||0)),amount):0;
+        if(paid>amount-discount){showToast('Paid amount cannot exceed the payable amount after discount (₨ '+(amount-discount).toLocaleString()+')','error');return;}
+        const dueNow=Math.max(0,amount-discount-paid);
+        let status=dueNow<=0?'Paid':(paid>0?'Partial':'Unpaid');
         const feeType=document.getElementById('feeType')?.value||'Monthly';
         const editing=document.getElementById('feeEditingId').value; const existing=(db.fees||[]).find(f=>f.id===editing);
         const month=document.getElementById('feeMonth').value||FEE_MONTHS[new Date().getMonth()];
@@ -7239,7 +7526,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         }
         const fee=existing||{id:'f_'+Math.random().toString(36).slice(2,10)};
         const previous=existing ? clone_(existing) : null;
-        Object.assign(fee,{studentId:s.id,studentName:s.name,class:c,rollNo:s.rollNo||'',fatherGuardianName:s.father||'',month,academicYear,feeType,feeAmount:amount,amount:amount,paidAmount:paid,dueAmount:Math.max(0,amount-paid),paymentDate:document.getElementById('feePaymentDate').value||todayLocal_(),date:document.getElementById('feePaymentDate').value||todayLocal_(),status,receiptNumber:document.getElementById('feeReceiptNumber').value||generateReceiptNumber()});
+        Object.assign(fee,{studentId:s.id,studentName:s.name,class:c,rollNo:s.rollNo||'',fatherGuardianName:s.father||'',month,academicYear,feeType,feeAmount:amount,amount:amount,paidAmount:paid,dueAmount:dueNow,discount,paymentDate:document.getElementById('feePaymentDate').value||todayLocal_(),date:document.getElementById('feePaymentDate').value||todayLocal_(),status,receiptNumber:document.getElementById('feeReceiptNumber').value||generateReceiptNumber()});
         if(!existing) db.fees.push(fee); s.feeStatus=status;
         s.feeStatus = getStudentEffectiveFeeStatus_(s, c);
         loadFees(); closeFeeModal(); showToast(editing?'Fee record updated successfully':'Fee record saved successfully','success');
@@ -7256,6 +7543,9 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
                 const rows=await buildFeePaymentRows_([{fee,before:previous,paidNow:delta,method:fee.paymentMethod||'',date:safeDate_(fee.paymentDate||fee.date)||todayLocal_(),receivedBy:currentReceiverName_()}]);
                 const histOk=await queueFastSave_(()=>saveFeePaymentRowsFast_(rows));
                 if(!histOk) showToast('⚠️ Fee saved, but its date-wise payment history entry failed to save.','warning');
+            } else if(delta<-0.5){
+                const histOk=await reduceFeePaymentHistory_(fee.id,-delta);
+                if(!histOk) showToast('⚠️ Fee corrected, but the date-wise payment history could not be reduced. Daily reports may still show the old payment.','warning');
             }
         }
     }
@@ -7326,11 +7616,11 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         if (!student) { showToast('Student not found', 'error'); return; }
         const records = (db.fees || []).filter(f => String(f.studentId||f.student_id||'')===String(studentId) && String(f.class||f.className||'')===String(className));
         if (!records.length) { showToast(`No fee records found for ${student.name}`, 'warning'); return; }
-        // Order by academic year, then calendar month within the session (April..March), then fee head.
+        // Order by academic year, then calendar month within the session (January..December), then fee head.
         const feeSortKey = f => {
             const sy = parseInt(String(f.academicYear||f.academic_year||'').slice(0,4), 10) || 0;
             const mi = FEE_MONTHS.indexOf(f.month);
-            const monthPos = mi < 0 ? 99 : (mi + 9) % 12;      // Apr=0 ... Mar=11
+            const monthPos = mi < 0 ? 99 : mi;      // Jan=0 ... Dec=11 (session = calendar year)
             return [sy, monthPos, String(f.feeType||f.fee_type||'Monthly'), String(f.paymentDate||f.date||''), String(f.id||'')];
         };
         const sorted = records.slice().sort((a,b) => {
@@ -7340,10 +7630,10 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         });
         const rows = sorted.map(f => {
             const amount=feeAmountValue(f), discount=Number(f.discount||0), paid=feePaidValue(f), due=feeDueValue(f);
-            return `<tr><td style="padding:6px;border:1px solid #ccc;">${escFee(formatDateShort_(f.paymentDate||f.date||''))}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(f.month||'')}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(f.academicYear||f.academic_year||'')}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(f.feeType||f.fee_type||'Monthly')}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${amount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${discount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${paid.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${due.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">${escFee(normalizeFeeStatus(f.status,amount,paid))}</td></tr>`;
+            return `<tr><td style="padding:6px;border:1px solid #ccc;">${escFee(formatDateShort_(f.paymentDate||f.date||''))}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(f.month||'')}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(feeAcademicYearDisplay_(f.academicYear||f.academic_year||''))}</td><td style="padding:6px;border:1px solid #ccc;">${escFee(f.feeType||f.fee_type||'Monthly')}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${amount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${discount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${paid.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${due.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:center;">${escFee(normalizeFeeStatus(f.status,amount,paid))}</td></tr>`;
         }).join('');
         const totalFee = sorted.reduce((n,f)=>n+feeAmountValue(f),0), totalDiscount = sorted.reduce((n,f)=>n+Number(f.discount||0),0), totalPaid = sorted.reduce((n,f)=>n+feePaidValue(f),0), totalDue = sorted.reduce((n,f)=>n+feeDueValue(f),0);
-        const page = `<div class="report-page">${reportPrintHeader('Student Fee Ledger')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span></div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;"><thead><tr style="background:#1e3a8a;color:white;"><th style="padding:6px;border:1px solid #ccc;">Date</th><th style="padding:6px;border:1px solid #ccc;">Month</th><th style="padding:6px;border:1px solid #ccc;">Academic Year</th><th style="padding:6px;border:1px solid #ccc;">Fee Head</th><th style="padding:6px;border:1px solid #ccc;">Amount</th><th style="padding:6px;border:1px solid #ccc;">Discount</th><th style="padding:6px;border:1px solid #ccc;">Paid</th><th style="padding:6px;border:1px solid #ccc;">Due</th><th style="padding:6px;border:1px solid #ccc;">Status</th></tr></thead><tbody>${rows}<tr style="font-weight:bold;background:#fef3c7;"><td colspan="4" style="padding:6px;border:1px solid #ccc;text-align:right;">Totals</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalFee.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalDiscount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalPaid.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalDue.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;"></td></tr></tbody></table><div class="footer">Printing Date: ${dmy_()} | THE EDUCATORS SCHOOL | Ahmad Haseeb Campus</div></div>`;
+        const page = `<div class="report-page">${reportPrintHeader('Student Fee Ledger')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span></div><table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:10px;"><thead><tr style="background:#1e3a8a;color:white;"><th style="padding:6px;border:1px solid #ccc;">Date</th><th style="padding:6px;border:1px solid #ccc;">Month</th><th style="padding:6px;border:1px solid #ccc;">Academic Year</th><th style="padding:6px;border:1px solid #ccc;">Fee Head</th><th style="padding:6px;border:1px solid #ccc;">Amount</th><th style="padding:6px;border:1px solid #ccc;">Discount</th><th style="padding:6px;border:1px solid #ccc;">Paid</th><th style="padding:6px;border:1px solid #ccc;">Due</th><th style="padding:6px;border:1px solid #ccc;">Status</th></tr></thead><tbody>${rows}<tr style="font-weight:bold;background:#fef3c7;"><td colspan="4" style="padding:6px;border:1px solid #ccc;text-align:right;">Totals</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalFee.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalDiscount.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalPaid.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;text-align:right;">${totalDue.toLocaleString()}</td><td style="padding:6px;border:1px solid #ccc;"></td></tr></tbody></table><div class="footer">Printing Date: ${dmy_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;
         printHTML(page);
     }
 
@@ -7402,23 +7692,102 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
             details = '';
         }
         return {
-            id: String(r?.record_id || ''), type, name, details,
+            id: String(r?.record_id || ''),
+            _trashRowId: String(r?.id || ''),
+            type, name, details,
             deletedDate: r?.deleted_at || '', data, className
         };
+    }
+
+    // Permanently remove the selected Deleted Items entry/duplicates by their actual
+    // deleted_records primary-key UUIDs, then verify against Supabase before reporting success.
+    async function permanentlyRemoveDeletedRecordRow_(item) {
+        const schoolId = String(SUPABASE_SCHOOL_ID || '');
+        const school = `school_id=eq.${encodeURIComponent(schoolId)}`;
+        const trashId = String(item?._trashRowId || '');
+        const type = String(item?.type || '').trim().toLowerCase();
+        const recordId = String(item?.id || '');
+        if (!schoolId || !type || !recordId) throw new Error('Could not identify the selected Deleted Items record.');
+        const keySelector = `&record_type=eq.${encodeURIComponent(type)}&record_id=eq.${encodeURIComponent(recordId)}`;
+        const queryFor = selector => `?${school}${selector}`;
+
+        // Resolve the exact server row UUIDs first. Use primary keys for DELETE instead
+        // of relying only on text fields; old app versions could leave multiple history
+        // rows with the same type + record ID.
+        let rows = await supabaseTableRequest('deleted_records', {
+            query: `${queryFor(keySelector)}&select=id,record_type,record_id&limit=1000`
+        });
+        if (!Array.isArray(rows)) throw new Error('Could not read this Deleted Items entry from Supabase.');
+
+        // If the logical key is absent, check the exact UUID carried by the displayed row.
+        // A UUID is only deleted when it still identifies this same logical entry.
+        if (!rows.length && trashId) {
+            const exact = await supabaseTableRequest('deleted_records', {
+                query: `${queryFor(`&id=eq.${encodeURIComponent(trashId)}`)}&select=id,record_type,record_id&limit=2`
+            });
+            if (!Array.isArray(exact)) throw new Error('Could not verify the selected Trash UUID in Supabase.');
+            const mismatched = exact.find(r => String(r.record_type || '').toLowerCase() !== type || String(r.record_id || '') !== recordId);
+            if (mismatched) throw new Error('The selected Trash UUID points to a different item; nothing was deleted. Please refresh Deleted Items and try again.');
+            rows = exact;
+        }
+
+        const rowIds = [...new Set(rows.map(r => String(r?.id || '')).filter(Boolean))];
+        // Delete by UUID in batches, not by a broad text filter.
+        for (let i = 0; i < rowIds.length; i += 100) {
+            const chunk = rowIds.slice(i, i + 100).map(encodeURIComponent).join(',');
+            await supabaseTableRequest('deleted_records', {
+                method: 'DELETE',
+                query: `?${school}&id=in.(${chunk})`,
+                headers: { 'Prefer': 'return=representation' }
+            });
+        }
+
+        // Verify using BOTH the logical key and the selected UUID. This prevents an
+        // empty/filtered DELETE response from being mistaken for a permanent deletion.
+        const remainingByKey = await supabaseTableRequest('deleted_records', {
+            query: `${queryFor(keySelector)}&select=id&limit=1`
+        });
+        if (!Array.isArray(remainingByKey)) throw new Error('Could not verify the Deleted Items history after deletion.');
+        if (remainingByKey.length) throw new Error(`Supabase still contains ${type} history for record ${recordId}; permanent deletion was not completed.`);
+
+        if (trashId) {
+            const remainingById = await supabaseTableRequest('deleted_records', {
+                query: `${queryFor(`&id=eq.${encodeURIComponent(trashId)}`)}&select=id&limit=1`
+            });
+            if (!Array.isArray(remainingById)) throw new Error('Could not verify the selected Trash UUID after deletion.');
+            if (remainingById.length) throw new Error('Supabase still contains the selected Trash UUID; permanent deletion was not completed.');
+        }
+        return true;
+    }
+
+    async function reloadDeletedItemsFromSupabase_() {
+        deletedRecordsLoaded_ = false;
+        const ok = await ensureDeletedRecordsLoaded_(true);
+        if (!ok) throw new Error('The delete request finished, but Deleted Items could not be reloaded from Supabase.');
+        loadDeletedItems();
+        return true;
     }
 
     async function ensureDeletedRecordsLoaded_(force=false) {
         if (deletedRecordsLoaded_ && !force) return true;
         if (deletedRecordsLoading_) return deletedRecordsLoading_;
+        // Keep object identities that exist before the network request. When the
+        // response returns, only preserve genuinely new local deletes created while
+        // the request was pending. Older local tombstones absent from Supabase must
+        // not be merged back in, or permanently deleted items reappear after refresh.
+        const localItemsAtRequestStart = new Set(Array.isArray(db.deleted) ? db.deleted : []);
         deletedRecordsLoading_ = (async function(){
             try {
                 const rows = await fetchAllTable_('deleted_records','id,school_id,record_type,record_id,record_data,deleted_at');
                 const fetched = Array.isArray(rows) ? rows.map(rowToDeleted) : [];
-                // Preserve any local tombstones created while this request was in flight.
                 const local = Array.isArray(db.deleted) ? db.deleted : [];
                 const byKey = new Map();
                 fetched.forEach(x=>byKey.set(String(x.type||'')+'|'+String(x.id||''),x));
-                local.forEach(x=>{ const k=String(x.type||'')+'|'+String(x.id||''); if(!byKey.has(k)) byKey.set(k,x); });
+                local.forEach(x=>{
+                    if (localItemsAtRequestStart.has(x)) return;
+                    const k=String(x.type||'')+'|'+String(x.id||'');
+                    if(!byKey.has(k)) byKey.set(k,x);
+                });
                 db.deleted = [...byKey.values()];
                 deletedRecordsLoaded_ = true;
                 return true;
@@ -7612,7 +7981,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         showToast(`✅ Cleanup done: ${cleaned} old record(s) fully removed from Supabase${failed ? `, ${failed} failed (see console)` : ''}. They will no longer come back after login.`, failed ? 'warning' : 'success');
     }
 
-    async function permanentlyDeleteSelectedDeletedItems() {
+    async function permanentlyDeleteSelectedDeletedItems() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can permanently delete records', 'error'); return; }
         if (!isSuperAdminUser_()) { showToast('Only Super Admin can permanently delete records', 'error'); return; }
         const indexes = [...document.querySelectorAll('#deletedTableBody .deleted-select-checkbox:checked')]
             .map(cb => Number(cb.dataset.index)).filter(Number.isInteger).sort((a, b) => b - a);
@@ -7620,52 +7989,86 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         if (!confirm(`⚠️ PERMANENTLY delete ${indexes.length} selected item(s)?\n\nThis cannot be undone.`)) return;
         if (!(await verifyArchiveAdminPassword('permanently delete the selected items'))) return;
 
-        const removed = [];
-        indexes.forEach(i => { const it = db.deleted[i]; if (it) { removed.push(it); db.deleted.splice(i, 1); } });
-        loadDeletedItems();
-        showToast(`Permanently deleting ${removed.length} item(s)... ⏳`, 'info');
-        const completed=[];
+        // Keep the server-backed list intact until each delete is confirmed by Supabase.
+        const removed = [...new Set(indexes.map(i => db.deleted?.[i]).filter(Boolean))];
+        if (!removed.length) { showToast('Selected items are out of date. Refresh Deleted Items and select them again.', 'warning'); return; }
+        showToast(`Permanently deleting ${removed.length} item(s) and verifying Supabase... ⏳`, 'info');
+        const completed = [];
+        let failedItem = null;
         try {
             const tableByType={student:'students',teacher:'teachers',subject:'subjects',exam:'exams',fee:'fees',notice:'notices'};
-            for(const it of removed){
-                const table=tableByType[it.type];
-                if(table){
-                    if(it.type==='student'){
-                        const sid=String(it.id||'');
+            const itemErrors = [];
+            const processRemovedItem = async (it) => {
+
+                const table = tableByType[it.type];
+                if (table) {
+                    if (it.type === 'student') {
+                        const sid = String(it.id || '');
                         try {
-                            for(const t of ['fees','attendance','exam_results','promotion_history','student_archive']) await supabaseTableRequest(t,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}`});
-                            await supabaseTableRequest(table,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(sid)}`});
-                        } catch(error) {
-                            const linked=it.data?.linked||{};
-                            if(linked.fees?.length) await upsertRows_('fees',linked.fees);
-                            if(linked.attendance?.length) await upsertRows_('attendance',linked.attendance);
-                            if(linked.examResults?.length) await upsertRows_('exam_results',linked.examResults);
-                            if(linked.promotionHistory?.length) await upsertRows_('promotion_history',linked.promotionHistory);
-                            if(it.data?.student) await upsertRows_('students',[studentToSupabaseRow(it.className||it.data.student.className||'PG',it.data.student)]);
+                            for (const t of ['fees','attendance','exam_results','promotion_history','student_archive']) {
+                                await supabaseTableRequest(t, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}` });
+                            }
+                            await supabaseTableRequest(table, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(sid)}` });
+                        } catch (error) {
+                            const linked = it.data?.linked || {};
+                            if (linked.fees?.length) await upsertRows_('fees', linked.fees);
+                            if (linked.attendance?.length) await upsertRows_('attendance', linked.attendance);
+                            if (linked.examResults?.length) await upsertRows_('exam_results', linked.examResults);
+                            if (linked.promotionHistory?.length) await upsertRows_('promotion_history', linked.promotionHistory);
+                            if (it.data?.student) await upsertRows_('students', [studentToSupabaseRow(it.className || it.data.student.className || 'PG', it.data.student)]);
                             throw error;
                         }
                     } else {
-                        let targetId=String(it.id||'');
-                        if(it.type==='subject'){
-                            const resolvedSubjectId=await resolveDeletedSubjectSupabaseId_(it);
-                            // Old trash entries may contain sub_xxxxxx. Never send
-                            // that legacy value to the UUID subjects.id column.
-                            if(resolvedSubjectId) targetId=resolvedSubjectId;
-                            else targetId='';
+                        let targetId = String(it.id || '');
+                        if (it.type === 'subject') {
+                            const resolvedSubjectId = await resolveDeletedSubjectSupabaseId_(it);
+                            // Legacy subject IDs cannot be sent to UUID columns.
+                            targetId = resolvedSubjectId || '';
                         }
-                        if(it.type==='exam') await supabaseTableRequest('exam_results',{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&exam_id=eq.${encodeURIComponent(String(it.id||''))}`});
-                        if(targetId) await supabaseTableRequest(table,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(targetId)}`});
+                        if (it.type === 'exam') {
+                            await supabaseTableRequest('exam_results', { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&exam_id=eq.${encodeURIComponent(String(it.id || ''))}` });
+                        }
+                        if (targetId) {
+                            await supabaseTableRequest(table, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(targetId)}` });
+                        }
                     }
-                    await supabaseTableRequest('deleted_records',{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&record_id=eq.${encodeURIComponent(String(it.id||''))}`});
                 }
+                await permanentlyRemoveDeletedRecordRow_(it);
                 completed.push(it);
+                        };
+            // Small worker pool keeps the existing per-item verification but avoids
+            // waiting for every network round-trip serially. Limit concurrency to 3.
+            let nextIndex = 0;
+            const worker = async () => {
+                while (true) {
+                    const index = nextIndex++;
+                    if (index >= removed.length) return;
+                    const it = removed[index];
+                    try { await processRemovedItem(it); }
+                    catch (error) { itemErrors.push({ item: it, error }); }
+                }
+            };
+            await Promise.all(Array.from({ length: Math.min(3, removed.length) }, () => worker()));
+            if (itemErrors.length) {
+                failedItem = itemErrors[0].item;
+                const details = itemErrors.map(x => `${x.item.name} (${x.item.type}): ${x.error?.message || x.error}`).join('; ');
+                throw new Error(`${itemErrors.length} item(s) failed: ${details}`);
             }
-            showToast(`✅ ${removed.length} item(s) permanently deleted.`, 'success');
+
+            // Reload the authoritative list after the final DELETE; do not rely on
+            // optimistic client-side removal. If Supabase still has a row, it will reappear here.
+            await reloadDeletedItemsFromSupabase_();
+            const stillVisible = (db.deleted || []).filter(x => completed.some(done =>
+                String(done.type || '') === String(x.type || '') && String(done.id || '') === String(x.id || '')
+            ));
+            if (stillVisible.length) throw new Error(`${stillVisible.length} selected item(s) still appear in the authoritative Supabase list after deletion.`);
+            showToast(`✅ ${completed.length} item(s) permanently deleted from Supabase and verified.`, 'success');
         } catch (error) {
-            const pending=removed.filter(it=>!completed.includes(it));
-            db.deleted.push(...pending);
-            loadDeletedItems();
-            showToast('❌ Permanent delete failed: ' + (error.message || error), 'error');
+            console.error('Deleted Items permanent-delete failure:', { itemType: failedItem?.type, itemId: failedItem?.id, error });
+            try { await reloadDeletedItemsFromSupabase_(); }
+            catch (reloadError) { console.error('Deleted Items re-check failed:', reloadError); loadDeletedItems(); }
+            const completedCount = completed.length;
+            showToast(`❌ Permanent delete failed${failedItem ? ` for ${failedItem.name} (${failedItem.type})` : ''}${completedCount ? `; ${completedCount} earlier item(s) were verified deleted` : ''}: ${error?.message || error}`, 'error');
         }
     }
 
@@ -7676,42 +8079,50 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         if (!confirm(`⚠️ PERMANENTLY delete "${item.name}" (${item.type})?\n\nThis cannot be undone — it will no longer be restorable afterward.`)) return;
         if (!(await verifyArchiveAdminPassword('permanently delete this item'))) return;
 
-        db.deleted.splice(index, 1);
-        loadDeletedItems();
-        showToast(`Permanently deleting "${item.name}"... ⏳`, 'info');
+        showToast(`Permanently deleting "${item.name}" and verifying Supabase... ⏳`, 'info');
         try {
             const tableByType={student:'students',teacher:'teachers',subject:'subjects',exam:'exams',fee:'fees',notice:'notices'};
-            const table=tableByType[item.type];
-            if(table){
-                if(item.type==='student'){
-                    const sid=String(item.id||'');
+            const table = tableByType[item.type];
+            if (table) {
+                if (item.type === 'student') {
+                    const sid = String(item.id || '');
                     try {
-                        for(const t of ['fees','attendance','exam_results','promotion_history','student_archive']) await supabaseTableRequest(t,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}`});
-                        await supabaseTableRequest(table,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(sid)}`});
-                    } catch(error) {
-                        const linked=item.data?.linked||{};
-                        if(linked.fees?.length) await upsertRows_('fees',linked.fees);
-                        if(linked.attendance?.length) await upsertRows_('attendance',linked.attendance);
-                        if(linked.examResults?.length) await upsertRows_('exam_results',linked.examResults);
-                        if(linked.promotionHistory?.length) await upsertRows_('promotion_history',linked.promotionHistory);
-                        if(item.data?.student) await upsertRows_('students',[studentToSupabaseRow(item.className||item.data.student.className||'PG',item.data.student)]);
+                        for (const t of ['fees','attendance','exam_results','promotion_history','student_archive']) {
+                            await supabaseTableRequest(t, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}` });
+                        }
+                        await supabaseTableRequest(table, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(sid)}` });
+                    } catch (error) {
+                        const linked = item.data?.linked || {};
+                        if (linked.fees?.length) await upsertRows_('fees', linked.fees);
+                        if (linked.attendance?.length) await upsertRows_('attendance', linked.attendance);
+                        if (linked.examResults?.length) await upsertRows_('exam_results', linked.examResults);
+                        if (linked.promotionHistory?.length) await upsertRows_('promotion_history', linked.promotionHistory);
+                        if (item.data?.student) await upsertRows_('students', [studentToSupabaseRow(item.className || item.data.student.className || 'PG', item.data.student)]);
                         throw error;
                     }
                 } else {
-                    if(item.type==='exam') await supabaseTableRequest('exam_results',{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&exam_id=eq.${encodeURIComponent(String(item.id||''))}`});
-                    await supabaseTableRequest(table,{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(String(item.id||''))}`});
+                    let targetId = String(item.id || '');
+                    if (item.type === 'subject') targetId = await resolveDeletedSubjectSupabaseId_(item) || '';
+                    if (item.type === 'exam') {
+                        await supabaseTableRequest('exam_results', { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&exam_id=eq.${encodeURIComponent(String(item.id || ''))}` });
+                    }
+                    if (targetId) await supabaseTableRequest(table, { method:'DELETE', query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&id=eq.${encodeURIComponent(targetId)}` });
                 }
-                await supabaseTableRequest('deleted_records',{method:'DELETE',query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&record_id=eq.${encodeURIComponent(String(item.id||''))}`});
             }
-            showToast(`✅ "${item.name}" permanently deleted.`, 'success');
+            await permanentlyRemoveDeletedRecordRow_(item);
+            await reloadDeletedItemsFromSupabase_();
+            const stillVisible = (db.deleted || []).some(x => String(x.type || '') === String(item.type || '') && String(x.id || '') === String(item.id || ''));
+            if (stillVisible) throw new Error('The selected item still appears in the authoritative Supabase list after deletion.');
+            showToast(`✅ "${item.name}" permanently deleted from Supabase and verified.`, 'success');
         } catch (error) {
-            db.deleted.splice(index, 0, item);
-            loadDeletedItems();
-            showToast('❌ Permanent delete failed: ' + (error.message || error), 'error');
+            console.error('Single Deleted Item permanent-delete failure:', { itemType:item?.type, itemId:item?.id, error });
+            try { await reloadDeletedItemsFromSupabase_(); }
+            catch (reloadError) { console.error('Deleted Items re-check failed:', reloadError); loadDeletedItems(); }
+            showToast(`❌ Permanent delete failed for ${item.name} (${item.type}): ${error?.message || error}`, 'error');
         }
     }
 
-    async function hideSelectedDeletedItems() {
+    async function hideSelectedDeletedItems() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can manage deleted history', 'error'); return; }
         if (currentUser && currentUser.role === 'Teacher') { showToast('Only admin can manage deleted items', 'error'); return; }
         const indexes = [...document.querySelectorAll('#deletedTableBody .deleted-select-checkbox:checked')]
             .map(cb => Number(cb.dataset.index)).filter(Number.isInteger);
@@ -7766,7 +8177,7 @@ ${exam.name}${exam.subject ? ' (' + exam.subject + ')' : ''}
         return true;
     }
 
-    async function restoreItem(index) {
+    async function restoreItem(index) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can restore deleted records', 'error'); return; }
         if (currentUser && currentUser.role === 'Teacher') { showToast('Only admin can restore items', 'error'); return; }
         const item = db.deleted[index];
         if (!item) return;
@@ -8298,7 +8709,7 @@ async function printPreviousPromotionData(index) {
     function reportPrintHeader(title){const schoolName=(document.getElementById('schoolName')?.value||AppStorage.get('school_name')||"THE QUAID CONCEPT EDUCATION SYSTEM");return `<div class="report-header"><h1>${schoolLogoImgTag_()}${escFee(schoolName)}</h1><h2>THE QUAID CONCEPT EDUCATION SYSTEM</h2><h3>${title}</h3></div>`;}
     function reportPrintStyles(){return `<style>.custom-report-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}.custom-report-table th,.custom-report-table td{border:1px solid #d1d5db;padding:7px 8px;text-align:left;vertical-align:top}.custom-report-table th{background:#f3f4f6;font-weight:700;text-align:center}.custom-report-table td.center{text-align:center}.custom-report-meta{display:flex;justify-content:space-between;margin:8px 0;font-size:11px;color:#4b5563}</style>`;}
     function buildClassContactReport(c){let r=(db.students[c]||[]).map((s,i)=>`<tr><td class="center">${i+1}</td><td>${s.name||''}</td><td>${s.contact||''}</td></tr>`).join('');return `<div class="report-page">${reportPrintHeader(`Class Contact List — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Contact / Phone Number</th></tr></thead><tbody>${r||'<tr><td colspan="3" class="center">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;}
-    function getStudentFeeTotal(s,c){let f=(db.fees||[]).filter(x=>String(x.studentId||x.student||'')===String(s.id||'')||(String(x.studentName||x.name||'')===String(s.name||'')&&String(x.class||x.className||'')===String(c)));return f.length?f.reduce((a,x)=>a+Number(x.amount||x.total||0),0):Number(s.totalFee||s.fee||0);}
+    function getStudentFeeTotal(s,c){const sid=String(s.id||'');let f=(db.fees||[]).filter(x=>{const xid=String(x.studentId||x.student_id||'');return xid?xid===sid:(String(x.studentName||x.name||'')===String(s.name||'')&&String(x.class||x.className||'')===String(c));});return f.length?f.reduce((a,x)=>a+feeNetValue_(x),0):Number(s.totalFee||s.fee||0);}
     function buildStudentFeeListReport(c){let r=(db.students[c]||[]).map((s,i)=>`<tr><td class="center">${i+1}</td><td>${s.name||''}</td><td class="center">${c}</td><td>${s.contact||''}</td><td class="center">${getStudentFeeTotal(s,c)||0}</td></tr>`).join('');return `<div class="report-page">${reportPrintHeader(`Student Fee List — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Class</th><th>Phone Number</th><th>Total Fees</th></tr></thead><tbody>${r||'<tr><td colspan="5" class="center">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;}
     function buildStudentBasicListReport(c){let r=(db.students[c]||[]).map((s,i)=>`<tr><td class="center">${i+1}</td><td>${s.name||''}</td><td class="center">${c}</td></tr>`).join('');return `<div class="report-page">${reportPrintHeader(`Student Basic List — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Class</th></tr></thead><tbody>${r||'<tr><td colspan="3" class="center">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;}
     // Active students list in the layout of a professional register: # / Roll No / Name / Father / Class / WhatsApp.
@@ -8331,8 +8742,31 @@ async function printPreviousPromotionData(index) {
         return `<div class="report-page">${reportPrintHeader(`Student Result Summary — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Class</th>${heads}<th>Overall %</th><th>Grade</th></tr></thead><tbody>${r||'<tr><td colspan="20" class="center">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;
     }
     function buildCompleteStudentReport(c){let r=(db.students[c]||[]).map((s,i)=>{let x=getStudentResultSummaryData(s,c),subs=x.subjects.map(q=>`${q.name}: ${q.obtained||0}/${q.total}`).join(', ');return `<tr><td class="center">${i+1}</td><td>${s.name||''}</td><td class="center">${c}</td><td>${subs||'N/A'}</td><td>${s.father||''}</td><td class="center">${x.overall}%</td></tr>`}).join('');return `<div class="report-page">${reportPrintHeader(`Complete Student Report — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Class</th><th>Subjects</th><th>Father Name</th><th>Total / Overall %</th></tr></thead><tbody>${r||'<tr><td colspan="6" class="center">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;}
-    function populateReportPrintClassSelect(){let s=document.getElementById('reportPrintClassSelect');if(s)s.innerHTML=['PG','Nursery','KG','1','2','3','4','5','6','7','8','9','10'].map(c=>`<option value="${c}">Class ${c}</option>`).join('');}
-    function populateReportPrintStudentSelect(){let s=document.getElementById('reportPrintStudentSelect'),c=document.getElementById('reportPrintClassSelect')?.value;if(!s||!c)return;s.innerHTML='<option value="">Select student</option>'+(db.students[c]||[]).map((x,i)=>`<option value="${x.id||i}">${x.name||'Unnamed'}${x.rollNo?' | Roll: '+x.rollNo:''}</option>`).join('');}
+    function populateReportPrintClassSelect(){
+        const s=document.getElementById('reportPrintClassSelect');
+        if(!s)return;
+        const preferred=['PG','Nursery','KG','1','2','3','4','5','6','7','8','9','10'];
+        const stored=Object.keys(db.students||{});
+        const classes=[...new Set([...preferred,...stored])];
+        const previous=s.value;
+        const isAllFeeHistory=document.getElementById('reportPrintType')?.value==='all-students-fee-detail';
+        s.innerHTML=(isAllFeeHistory?'<option value="">All Classes — Entire School</option>':'')+classes.map(c=>`<option value="${escFee(c)}">Class ${escFee(c)}</option>`).join('');
+        const previousHasStudents=previous && Array.isArray(db.students?.[previous]) && db.students[previous].length>0;
+        const firstPopulated=classes.find(c=>Array.isArray(db.students?.[c]) && db.students[c].length>0);
+        if(isAllFeeHistory && !previousHasStudents) s.value='';
+        else if(previousHasStudents) s.value=previous;
+        else if(firstPopulated) s.value=firstPopulated;
+        else if(previous && classes.includes(previous)) s.value=previous;
+    }
+    function populateReportPrintStudentSelect(){
+        const s=document.getElementById('reportPrintStudentSelect'),c=document.getElementById('reportPrintClassSelect')?.value;
+        if(!s)return;
+        if(!c){s.innerHTML='<option value="">Select class first</option>';return;}
+        const students=Array.isArray(db.students?.[c])?db.students[c]:[];
+        s.innerHTML=students.length
+            ? '<option value="">Select student</option>'+students.map((x,i)=>`<option value="${escFee(x.id||i)}">${escFee(x.name||'Unnamed')}${x.rollNo?' | Roll: '+escFee(x.rollNo):''}</option>`).join('')
+            : `<option value="">No students in Class ${escFee(c)}</option>`;
+    }
     function reportPrintTypeChanged(){let t=document.getElementById('reportPrintType')?.value;let needsClass=!['teacher-list','class-percentage','fee-defaulters','fee-collection-by-date','active-students-all'].includes(t);let needsStudent=['student-result','student-complete','student-fee-detail','student-attendance','previous-class-history','class-student-report'].includes(t);document.getElementById('reportPrintClassWrap')?.classList.toggle('hidden',!needsClass);document.getElementById('reportPrintStudentWrap')?.classList.toggle('hidden',!needsStudent);document.getElementById('feeCollectionDateWrap')?.classList.toggle('hidden',t!=='fee-collection-by-date');populateReportPrintClassSelect();populateReportPrintStudentSelect();}
     function reportPrintClassChanged(){populateReportPrintStudentSelect();}
     function findStudentForReport(className, id){return (db.students[className]||[]).find((x,i)=>String(x.id||i)===String(id));}
@@ -8340,15 +8774,19 @@ async function printPreviousPromotionData(index) {
         const sid=String(studentId||'');
         if(!sid) return false;
         try {
-            const [feeRows,resultRows,attendanceRows,examRows]=await Promise.all([
+            const [feeRows,resultRows,attendanceRows,examRows,paymentRows]=await Promise.all([
                 fetchTableForStudentIdsPaged_('fees',[sid],'*'),
                 fetchTableForStudentIdsPaged_('exam_results',[sid],'*'),
                 supabaseTableRequest('attendance',{query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}&select=student_id,attendance_date,status&order=attendance_date.asc`}),
-                fetchAllTable_('exams','id,school_id,name,class_name,subject,exam_date,total_marks,passing,academic_year')
+                fetchAllTable_('exams','id,school_id,name,class_name,subject,exam_date,total_marks,passing,academic_year'),
+                supabaseTableRequest('fee_payments',{query:`?school_id=eq.${encodeURIComponent(SUPABASE_SCHOOL_ID)}&student_id=eq.${encodeURIComponent(sid)}&select=id,fee_id,student_id,student_name,class_name,fee_type,month,academic_year,payment_date,amount,discount,payment_method,received_by,receipt_no&order=payment_date.asc`})
             ]);
             const feeMap=new Map((db.fees||[]).map(f=>[String(f.id||''),f]));
             (Array.isArray(feeRows)?feeRows:[]).forEach(r=>{ const id=String(r.id||''); if(id) feeMap.set(id,rowToFee(r)); });
             db.fees=[...feeMap.values()];
+            const paymentMap=new Map((db.feePayments||[]).map(p=>[String(p.id||''),p]));
+            (Array.isArray(paymentRows)?paymentRows:[]).forEach(r=>{const p=rowToFeePayment(r);if(p.id)paymentMap.set(String(p.id),p);});
+            db.feePayments=[...paymentMap.values()];
             db.examResults=db.examResults||{};
             (Array.isArray(resultRows)?resultRows:[]).forEach(r=>{ const eid=String(r.exam_id||''); const sid2=String(r.student_id||''); if(eid&&sid2){ db.examResults[eid]=db.examResults[eid]||{}; db.examResults[eid][sid2]=r.obtained_marks; } });
             const examMap=new Map((db.exams||[]).map(e=>[String(e.id||''),e]));
@@ -8373,7 +8811,7 @@ async function printPreviousPromotionData(index) {
         let resultRows='',sum=0,total=0;
         exams.forEach(e=>{ const results=(db.examResults||{})[e.id]||{}; if(results[student.id]===undefined)return; const got=Number(results[student.id]||0),tm=Number(e.totalMarks||100),pct=tm?((got/tm)*100).toFixed(1):'0.0'; sum+=got; total+=tm; resultRows+=`<tr><td>${e.name||''}</td><td>${e.subject||''}</td><td>${e.date||'N/A'}</td><td>${got}</td><td>${tm}</td><td>${pct}%</td><td>${getGrade(pct).label}</td></tr>`; });
         const days=(student.present||0)+(student.absences||0),att=days?Math.round(((student.present||0)/days)*100):0;
-        return `<div class="report-page">${reportPrintHeader('Individual Student Comprehensive Report')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span><span><b>Academic Year:</b> ${escFee(getAcademicYear())}</span></div><h3>Academic Result — All Tests</h3><table class="custom-report-table"><thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody>${resultRows||'<tr><td colspan="7">No exam results found.</td></tr>'}</tbody></table><p><b>Overall Result:</b> ${total?((sum/total)*100).toFixed(1):'0.0'}% &nbsp; <b>Grade:</b> ${getGrade(total?((sum/total)*100):0).label}</p><h3>Attendance</h3><p>Present: ${student.present||0} &nbsp; Absent: ${student.absences||0} &nbsp; Attendance: ${att}%</p><div class="footer">Printing Date: ${dmy_()} | ${typeof schoolName!=='undefined'&&schoolName?escFee(schoolName):'THE EDUCATORS SCHOOL'}</div></div>`;
+        return `<div class="report-page">${reportPrintHeader('Individual Student Comprehensive Report')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span><span><b>Academic Year:</b> ${escFee(getAcademicYear())}</span></div><h3>Academic Result — All Tests</h3><table class="custom-report-table"><thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody>${resultRows||'<tr><td colspan="7">No exam results found.</td></tr>'}</tbody></table><p><b>Overall Result:</b> ${total?((sum/total)*100).toFixed(1):'0.0'}% &nbsp; <b>Grade:</b> ${getGrade(total?((sum/total)*100):0).label}</p><h3>Attendance</h3><p>Present: ${student.present||0} &nbsp; Absent: ${student.absences||0} &nbsp; Attendance: ${att}%</p><div class="footer">Printing Date: ${dmy_()} | ${'THE QUAID CONCEPT EDUCATION SYSTEM'}</div></div>`;
     }
 
     async function buildStudentCompleteOverallResultReport_(student,className){
@@ -8397,18 +8835,41 @@ async function printPreviousPromotionData(index) {
         const teacherObtainedRows=[...teacherMap.entries()].map(([teacher,v])=>`<tr><td>${escFee(teacher)}</td><td>${v.got}</td></tr>`).join('');
         const teacherTotalRows=[...teacherMap.entries()].map(([teacher,v])=>`<tr><td>${escFee(teacher)}</td><td>${v.total}</td></tr>`).join('');
         const days=(student.present||0)+(student.absences||0),att=days?Math.round(((student.present||0)/days)*100):0;
-        return `<div class="report-page">${reportPrintHeader('Student — Complete Overall Result')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span><span><b>Academic Year:</b> ${escFee(getAcademicYear())}</span></div><h3>Academic Result — All Tests</h3><table class="custom-report-table"><thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody>${resultRows||'<tr><td colspan="7">No exam results found.</td></tr>'}</tbody></table><p><b>Overall Result:</b> ${total?((sum/total)*100).toFixed(1):'0.0'}% &nbsp; <b>Grade:</b> ${getGrade(total?((sum/total)*100):0).label}</p><h3>Subject Percentage</h3><table class="custom-report-table"><thead><tr><th>Subject</th><th>Obtained Marks</th><th>Total Marks</th><th>Percentage</th></tr></thead><tbody>${subjectRows||'<tr><td colspan="4">No subject results found.</td></tr>'}</tbody></table><h3>Teacher Obtained Marks</h3><table class="custom-report-table"><thead><tr><th>Teacher</th><th>Obtained Marks</th></tr></thead><tbody>${teacherObtainedRows||'<tr><td colspan="2">No teacher marks found.</td></tr>'}</tbody></table><h3>Teacher Total Marks</h3><table class="custom-report-table"><thead><tr><th>Teacher</th><th>Total Marks</th></tr></thead><tbody>${teacherTotalRows||'<tr><td colspan="2">No teacher marks found.</td></tr>'}</tbody></table><h3>Attendance</h3><p>Present: ${student.present||0} &nbsp; Absent: ${student.absences||0} &nbsp; Attendance: ${att}%</p><div class="footer">Printing Date: ${dmy_()} | ${typeof schoolName!=='undefined'&&schoolName?escFee(schoolName):'THE EDUCATORS SCHOOL'}</div></div>`;
+        return `<div class="report-page">${reportPrintHeader('Student — Complete Overall Result')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span><span><b>Father:</b> ${escFee(student.father||'N/A')}</span><span><b>Academic Year:</b> ${escFee(getAcademicYear())}</span></div><h3>Academic Result — All Tests</h3><table class="custom-report-table"><thead><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Obtained</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody>${resultRows||'<tr><td colspan="7">No exam results found.</td></tr>'}</tbody></table><p><b>Overall Result:</b> ${total?((sum/total)*100).toFixed(1):'0.0'}% &nbsp; <b>Grade:</b> ${getGrade(total?((sum/total)*100):0).label}</p><h3>Subject Percentage</h3><table class="custom-report-table"><thead><tr><th>Subject</th><th>Obtained Marks</th><th>Total Marks</th><th>Percentage</th></tr></thead><tbody>${subjectRows||'<tr><td colspan="4">No subject results found.</td></tr>'}</tbody></table><h3>Teacher Obtained Marks</h3><table class="custom-report-table"><thead><tr><th>Teacher</th><th>Obtained Marks</th></tr></thead><tbody>${teacherObtainedRows||'<tr><td colspan="2">No teacher marks found.</td></tr>'}</tbody></table><h3>Teacher Total Marks</h3><table class="custom-report-table"><thead><tr><th>Teacher</th><th>Total Marks</th></tr></thead><tbody>${teacherTotalRows||'<tr><td colspan="2">No teacher marks found.</td></tr>'}</tbody></table><h3>Attendance</h3><p>Present: ${student.present||0} &nbsp; Absent: ${student.absences||0} &nbsp; Attendance: ${att}%</p><div class="footer">Printing Date: ${dmy_()} | ${'THE QUAID CONCEPT EDUCATION SYSTEM'}</div></div>`;
     }
 
     async function buildStudentFeeDetailReport(student,className){
         await ensureStudentReportHistoryLoaded_(student?.id);
-        const fees=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student.id||'') && String(f.class||f.className||'')===String(className||'')).slice().sort((a,b)=>{const ad=String(a.paymentDate||a.date||''),bd=String(b.paymentDate||b.date||'');if(ad!==bd)return ad.localeCompare(bd);return String(a.id||'').localeCompare(String(b.id||''));});
-        const rows=fees.map(f=>{const amount=feeAmountValue(f),discount=Number(f.discount||0),paid=feePaidValue(f),due=feeDueValue(f);return `<tr><td>${escFee(f.paymentDate||f.date||'')}</td><td>${escFee(f.month||'')}</td><td>${escFee(feeReportYearOnly_(f.academicYear||f.academic_year||''))}</td><td>${escFee(f.feeType||f.fee_type||'Monthly')}</td><td>${amount.toLocaleString()}</td><td>${discount.toLocaleString()}</td><td>${paid.toLocaleString()}</td><td>${due.toLocaleString()}</td><td>${escFee(normalizeFeeStatus(f.status,amount,paid))}</td></tr>`;}).join('');
+        const fees=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student.id||'') && String(f.class||f.className||'')===String(className||'')).slice().sort((a,b)=>{const ay=feeReportYearOnly_(a.academicYear||a.academic_year||''),by=feeReportYearOnly_(b.academicYear||b.academic_year||'');if(ay!==by)return ay.localeCompare(by);const am=FEE_MONTHS.indexOf(a.month),bm=FEE_MONTHS.indexOf(b.month);if(am!==bm)return am-bm;const at=String(a.feeType||a.fee_type||'Monthly'),bt=String(b.feeType||b.fee_type||'Monthly');if(at!==bt)return at.localeCompare(bt);return String(a.paymentDate||a.date||'').localeCompare(String(b.paymentDate||b.date||''));});
+        const rows=fees.map(f=>{const amount=feeAmountValue(f),discount=Number(f.discount||0),paid=feePaidValue(f),due=feeDueValue(f);return `<tr><td>${escFee(f.paymentDate||f.date||'—')}</td><td>${escFee(f.month||'—')}</td><td>${escFee(feeReportYearOnly_(f.academicYear||f.academic_year||''))}</td><td><b>${escFee(f.feeType||f.fee_type||'Monthly')}</b></td><td>${amount.toLocaleString()}</td><td>${discount.toLocaleString()}</td><td>${paid.toLocaleString()}</td><td>${due.toLocaleString()}</td><td>${escFee(due>0 ? (paid>0?'Partial':'Unpaid') : normalizeFeeStatus(f.status,amount,paid))}</td></tr>`;}).join('');
+        const studentPayments=(db.feePayments||[]).filter(p=>String(p.studentId||'')===String(student.id||'') && String(p.class||'')===String(className||'')).slice().sort((a,b)=>String(a.paymentDate||'').localeCompare(String(b.paymentDate||''))||String(a.id||'').localeCompare(String(b.id||'')));
+        const paymentRows=studentPayments.map(p=>`<tr><td>${escFee(p.paymentDate||'—')}</td><td>${escFee(p.month||'—')}</td><td>${escFee(feeReportYearOnly_(p.academicYear||''))}</td><td>${escFee(p.feeType||'Monthly')}</td><td>${Number(p.amount||0).toLocaleString()}</td><td>${escFee(p.paymentMethod||'—')}</td><td>${escFee(p.receiptNo||'—')}</td><td>${escFee(p.receivedBy||'—')}</td></tr>`).join('');
         const total=fees.reduce((a,f)=>a+feeAmountValue(f),0),discount=fees.reduce((a,f)=>a+Number(f.discount||0),0),paid=fees.reduce((a,f)=>a+feePaidValue(f),0),due=fees.reduce((a,f)=>a+feeDueValue(f),0);
-        return `<div class="report-page">${reportPrintHeader('Student — Complete Fee History')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span></div><table class="custom-report-table"><thead><tr><th>Date</th><th>Month</th><th>Academic Year</th><th>Fee Head</th><th>Amount</th><th>Discount</th><th>Paid</th><th>Due</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="9">No fee records found.</td></tr>'}</tbody></table><p><b>Total Fees:</b> ${total.toLocaleString()} &nbsp; <b>Total Discount:</b> ${discount.toLocaleString()} &nbsp; <b>Paid:</b> ${paid.toLocaleString()} &nbsp; <b>Balance:</b> ${due.toLocaleString()}</p><div class="footer">Printing Date: ${dmy_()} | ${typeof schoolName!=='undefined'&&schoolName?escFee(schoolName):'THE EDUCATORS SCHOOL'}</div></div>`;
+        const outstanding=getStudentOutstandingFeeItems_(className,student.id);
+        const outstandingRows=outstanding.map(f=>`<tr><td>${escFee(f.feeType||f.fee_type||'Monthly')}</td><td>${escFee(f.month||'—')}</td><td>${escFee(feeReportYearOnly_(f.academicYear||f.academic_year||''))}</td><td>${Number(feeAmountValue(f)).toLocaleString()}</td><td>${Number(f.discount||0).toLocaleString()}</td><td>${feePaidValue(f).toLocaleString()}</td><td><b>${feeDueValue(f).toLocaleString()}</b></td></tr>`).join('');
+        const outstandingMonths=[...new Set(outstanding.filter(f=>(f.feeType||f.fee_type||'Monthly').toLowerCase()==='monthly').map(f=>`${f.month||'Unknown'} ${feeReportYearOnly_(f.academicYear||f.academic_year||'')}`))];
+        const feeHeadTotals=['Monthly','Transport','Admission'].map(head=>({head,items:fees.filter(f=>String(f.feeType||f.fee_type||'Monthly').toLowerCase()===head.toLowerCase())})).filter(x=>x.items.length).map(x=>`<tr><td>${escFee(x.head==='Monthly'?'Monthly Tuition Fee':x.head+' Fee')}</td><td>${x.items.reduce((n,f)=>n+feeAmountValue(f),0).toLocaleString()}</td><td>${x.items.reduce((n,f)=>n+Number(f.discount||0),0).toLocaleString()}</td><td>${x.items.reduce((n,f)=>n+feePaidValue(f),0).toLocaleString()}</td><td>${x.items.reduce((n,f)=>n+feeDueValue(f),0).toLocaleString()}</td></tr>`).join('');
+        return `<div class="report-page">${reportPrintHeader('Student — Complete Fee History')}<div class="custom-report-meta"><span><b>Name:</b> ${escFee(student.name||'')}</span><span><b>Class:</b> ${escFee(className)}</span><span><b>Roll:</b> ${escFee(student.rollNo||'N/A')}</span></div><h3>Fee Head Summary</h3><table class="custom-report-table"><thead><tr><th>Fee Head</th><th>Total Amount</th><th>Discount</th><th>Paid</th><th>Due</th></tr></thead><tbody>${feeHeadTotals||'<tr><td colspan="5">No fee records found.</td></tr>'}</tbody></table><h3>Complete Fee Ledger (All Recorded Months / Fee Heads)</h3><p>Each row below shows the saved fee record for that month/head, including amount, discount, total paid, remaining due, and status. Months without a saved fee record are not fabricated.</p><table class="custom-report-table"><thead><tr><th>Fee Record Date</th><th>Month</th><th>Academic Year</th><th>Fee Head</th><th>Fee Amount</th><th>Discount</th><th>Total Paid</th><th>Remaining Due</th><th>Status</th></tr></thead><tbody>${rows||'<tr><td colspan="9">No fee records found.</td></tr>'}</tbody></table><h3>Payment Transactions (Each Recorded Installment)</h3><p>Partial payments are shown as separate transactions with their own date, amount, method, receipt number and receiver. These transaction rows are details only and are not added again to the fee-ledger totals.</p><table class="custom-report-table"><thead><tr><th>Payment Date</th><th>Fee Month</th><th>Academic Year</th><th>Fee Head</th><th>Payment Amount</th><th>Method</th><th>Receipt No.</th><th>Received By</th></tr></thead><tbody>${paymentRows||'<tr><td colspan="8">No separate payment transactions found.</td></tr>'}</tbody></table><p><b>Total Fees:</b> ${total.toLocaleString()} &nbsp; <b>Total Discount:</b> ${discount.toLocaleString()} &nbsp; <b>Total Paid:</b> ${paid.toLocaleString()} &nbsp; <b>Total Balance:</b> ${due.toLocaleString()}</p><h3>Outstanding Fee Details — Unpaid / Partial</h3><p><b>Outstanding Monthly Fee Months:</b> ${escFee(outstandingMonths.join(', ')||'None')}</p><table class="custom-report-table"><thead><tr><th>Fee Head</th><th>Month</th><th>Year</th><th>Fee Amount</th><th>Discount</th><th>Paid</th><th>Outstanding Due</th></tr></thead><tbody>${outstandingRows||'<tr><td colspan="7">No outstanding fees.</td></tr>'}</tbody></table><p><b>Outstanding Fee Records:</b> ${outstanding.length} &nbsp; <b>Total Outstanding:</b> ${outstanding.reduce((n,f)=>n+feeDueValue(f),0).toLocaleString()}</p><div class="footer">Printing Date: ${dmy_()} | ${'THE QUAID CONCEPT EDUCATION SYSTEM'}</div></div>`;
+    }
+    async function buildAllStudentsCompleteFeeHistoryReport_(selectedClass=''){
+        const groups=Object.entries(db.students||{}).filter(([className,students])=>Array.isArray(students)&&(!selectedClass||String(className)===String(selectedClass)));
+        const entries=groups.flatMap(([className,students])=>students.map(student=>({className,student}))).filter(x=>x.student&&x.student.id!=null);
+        if(!entries.length)return `<div class="report-page">${reportPrintHeader('All Students — Complete Fee History')}<p>No students found for ${selectedClass?`Class ${escFee(selectedClass)}`:'the selected classes'}.</p></div>`;
+        const pages=[]; let totalFees=0,totalDiscount=0,totalPaid=0,totalDue=0;
+        for(const {className,student} of entries){
+            try{await ensureStudentReportHistoryLoaded_(student.id);}catch(e){console.warn('Could not load full fee history for student',student.id,e);}
+            const studentFees=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(student.id) && String(f.class||f.className||className)===String(className));
+            totalFees+=studentFees.reduce((n,f)=>n+feeAmountValue(f),0);
+            totalDiscount+=studentFees.reduce((n,f)=>n+Number(f.discount||0),0);
+            totalPaid+=studentFees.reduce((n,f)=>n+feePaidValue(f),0);
+            totalDue+=studentFees.reduce((n,f)=>n+feeDueValue(f),0);
+            pages.push(await buildStudentFeeDetailReport(student,className));
+        }
+        pages.push(`<div class="report-page">${reportPrintHeader(selectedClass?`Class ${escFee(selectedClass)} — Overall Fee Summary`:'All Students — Overall Fee Summary')}<h3>${selectedClass?`Class ${escFee(selectedClass)} — Grand Totals`:'All Students — Grand Totals'}</h3><table class="custom-report-table"><thead><tr><th>Total Fees</th><th>Total Discount</th><th>Total Paid</th><th>Total Balance Due</th></tr></thead><tbody><tr><td>${totalFees.toLocaleString()}</td><td>${totalDiscount.toLocaleString()}</td><td>${totalPaid.toLocaleString()}</td><td>${totalDue.toLocaleString()}</td></tr></tbody></table><div class="footer">Printing Date: ${dmy_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`);
+        return pages.join('');
     }
     function buildClassFeeHistoryReport(c){
-        const students=db.students[c]||[], rows=students.map((s,i)=>{const fees=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(s.id||''));const total=fees.reduce((a,f)=>a+Number(f.amount||f.total||f.feeAmount||0),0),paid=fees.reduce((a,f)=>a+Number(f.paidAmount||f.paid||0),0);return `<tr><td class="center">${i+1}</td><td>${s.name||''}</td><td>${fees.map(f=>f.date||f.month||'').join(', ')||'—'}</td><td class="center">${total}</td><td class="center">${paid}</td><td class="center">${total-paid}</td></tr>`}).join('');
+        const students=db.students[c]||[], rows=students.map((s,i)=>{const fees=(db.fees||[]).filter(f=>String(f.studentId||f.student_id||'')===String(s.id||''));const total=fees.reduce((a,f)=>a+feeNetValue_(f),0),paid=fees.reduce((a,f)=>a+feePaidValue(f),0),bal=fees.reduce((a,f)=>a+feeDueValue(f),0);return `<tr><td class="center">${i+1}</td><td>${escFee(s.name||'')}</td><td>${escFee(fees.map(f=>f.date||f.month||'').join(', ')||'—')}</td><td class="center">${total}</td><td class="center">${paid}</td><td class="center">${bal}</td></tr>`}).join('');
         return `<div class="report-page">${reportPrintHeader(`Student — Complete Fee History — Class ${c}`)}<div class="custom-report-meta"><span><b>Class:</b> ${c}</span><span><b>Print Date:</b> ${dmy_()}</span></div><table class="custom-report-table"><thead><tr><th>S.No</th><th>Student Name</th><th>Dates/Months</th><th>Total Fees</th><th>Paid</th><th>Balance</th></tr></thead><tbody>${rows||'<tr><td colspan="6">No students found.</td></tr>'}</tbody></table><div class="footer">Generated on ${dmyTime_()} | THE QUAID CONCEPT EDUCATION SYSTEM</div></div>`;
     }
     async function buildStudentAttendanceReport(student,className){
@@ -8516,7 +8977,7 @@ async function printPreviousPromotionData(index) {
         document.body.style.overflow='hidden';
     }
     function closeReportPrintSelection(){document.getElementById('reportPrintSelectionModal')?.classList.add('hidden');document.body.style.overflow='auto';}
-    async function confirmReportPrint(){let t=document.getElementById('reportPrintType')?.value,c=document.getElementById('reportPrintClassSelect')?.value||'PG',sid=document.getElementById('reportPrintStudentSelect')?.value,page='',reportTitle=(document.getElementById('studentReportTitleInput')?.value||'Academic Records').trim()||'Academic Records';let infoMode=document.getElementById('studentReportInfoMode')?.value||'basic';let testDateMode=document.getElementById('studentReportTestDateMode')?.value||'show';if(t==='class-contact')page=buildClassContactReport(c);else if(t==='student-fee')page=buildStudentFeeListReport(c);else if(t==='student-basic')page=buildStudentBasicListReport(c);else if(t==='teacher-list')page=buildTeacherListReport();else if(t==='class-percentage')page=buildClassPercentageReport();else if(t==='student-result')page=sid?await buildStudentComprehensiveReport(findStudentForReport(c,sid),c):buildStudentResultSummaryReport(c);else if(t==='student-complete')page=sid?await buildStudentCompleteOverallResultReport_(findStudentForReport(c,sid),c):buildCompleteStudentReport(c);else if(t==='student-fee-detail'){const st=findStudentForReport(c,sid);page=st?await buildStudentFeeDetailReport(st,c):buildClassFeeHistoryReport(c);}else if(t==='student-attendance'){const st=findStudentForReport(c,sid);page=st?await buildStudentAttendanceReport(st,c):buildClassAttendanceReport(c);}else if(t==='previous-class-history'){const st=findStudentForReport(c,sid);showToast('Loading previous class data... ⏳','info');page=st?await buildPreviousClassHistoryReport(st):await buildClassPreviousClassHistoryReport(c);}else if(t==='class-student-report'){const st=findStudentForReport(c,sid);page=st?buildStudentReportPage(st,c,reportTitle,infoMode,testDateMode):'';}else if(t==='class-all-report'){const students=db.students[c]||[];page=students.map(st=>buildStudentReportPage(st,c,reportTitle,infoMode,testDateMode)).join('');}else if(t==='fee-defaulters'){page=buildFeeDefaultersReport();}else if(t==='active-students-class'){page=buildActiveStudentsListReport(c);}else if(t==='active-students-all'){page=buildActiveStudentsListReport('');}else if(t==='fee-collection-by-date'){page=await buildFeeCollectionByDateReport_();}if(!page){showToast('Please select a student/report type','warning');return;}closeReportPrintSelection();printHTML(reportPrintStyles()+page);}
+    async function confirmReportPrint(){let t=document.getElementById('reportPrintType')?.value,c=document.getElementById('reportPrintClassSelect')?.value??'PG',sid=document.getElementById('reportPrintStudentSelect')?.value,page='',reportTitle=(document.getElementById('studentReportTitleInput')?.value||'Academic Records').trim()||'Academic Records';let infoMode=document.getElementById('studentReportInfoMode')?.value||'basic';let testDateMode=document.getElementById('studentReportTestDateMode')?.value||'show';if(t==='class-contact')page=buildClassContactReport(c);else if(t==='student-fee')page=buildStudentFeeListReport(c);else if(t==='student-basic')page=buildStudentBasicListReport(c);else if(t==='teacher-list')page=buildTeacherListReport();else if(t==='class-percentage')page=buildClassPercentageReport();else if(t==='student-result')page=sid?await buildStudentComprehensiveReport(findStudentForReport(c,sid),c):buildStudentResultSummaryReport(c);else if(t==='student-complete')page=sid?await buildStudentCompleteOverallResultReport_(findStudentForReport(c,sid),c):buildCompleteStudentReport(c);else if(t==='student-fee-detail'){const st=findStudentForReport(c,sid);page=st?await buildStudentFeeDetailReport(st,c):buildClassFeeHistoryReport(c);}else if(t==='all-students-fee-detail'){page=await buildAllStudentsCompleteFeeHistoryReport_(c==='PG'?'PG':c);}else if(t==='student-attendance'){const st=findStudentForReport(c,sid);page=st?await buildStudentAttendanceReport(st,c):buildClassAttendanceReport(c);}else if(t==='previous-class-history'){const st=findStudentForReport(c,sid);showToast('Loading previous class data... ⏳','info');page=st?await buildPreviousClassHistoryReport(st):await buildClassPreviousClassHistoryReport(c);}else if(t==='class-student-report'){const st=findStudentForReport(c,sid);page=st?buildStudentReportPage(st,c,reportTitle,infoMode,testDateMode):'';}else if(t==='class-all-report'){const students=db.students[c]||[];page=students.map(st=>buildStudentReportPage(st,c,reportTitle,infoMode,testDateMode)).join('');}else if(t==='fee-defaulters'){page=buildFeeDefaultersReport();}else if(t==='active-students-class'){page=buildActiveStudentsListReport(c);}else if(t==='active-students-all'){page=buildActiveStudentsListReport('');}else if(t==='fee-collection-by-date'){page=await buildFeeCollectionByDateReport_();}if(!page){showToast('Please select a student/report type','warning');return;}closeReportPrintSelection();printHTML(reportPrintStyles()+page);}
 
     async function buildFeeCollectionByDateReport_(){
         const from=String(document.getElementById('feeCollectionFromDate')?.value||'');
@@ -8533,22 +8994,22 @@ async function printPreviousPromotionData(index) {
         const lines=[];
         payByFee.forEach((list,feeId)=>{
             const fee=feeById.get(feeId);
-            list.forEach(p=>{ if(inRange(p.paymentDate)&&p.amount>0) lines.push({date:p.paymentDate,student:p.studentName||(fee&&(fee.studentName||getFeeStudent(fee)?.name))||'',cls:p.class||(fee&&(fee.class||fee.className))||'',head:p.feeType||'Monthly',amount:p.amount,method:p.paymentMethod||'N/A',receipt:p.receiptNo||'',by:p.receivedBy||'N/A'}); });
+            list.forEach(p=>{ if(inRange(p.paymentDate)&&p.amount>0) lines.push({date:p.paymentDate,student:p.studentName||(fee&&(fee.studentName||getFeeStudent(fee)?.name))||'',cls:p.class||(fee&&(fee.class||fee.className))||'',head:p.feeType||(fee&&(fee.feeType||fee.fee_type))||'Monthly',month:p.month||(fee&&fee.month)||'',academicYear:p.academicYear||(fee&&(fee.academicYear||fee.academic_year))||'',amount:p.amount,method:p.paymentMethod||'N/A',receipt:p.receiptNo||'',by:p.receivedBy||'N/A'}); });
             // Money recorded on the fee but missing from the installment history (older data / edits).
-            if(fee){ const rest=feePaidValue(fee)-list.reduce((n,p)=>n+p.amount,0); const d=String(fee.paymentDate||fee.date||''); if(rest>0.5&&inRange(d)) lines.push({date:d,student:fee.studentName||getFeeStudent(fee)?.name||'',cls:fee.class||fee.className||'',head:fee.feeType||fee.fee_type||'Monthly',amount:rest,method:'Earlier / adjustment',receipt:fee.receiptNumber||fee.receiptNo||'',by:fee.receivedBy||'N/A'}); }
+            if(fee){ const rest=feePaidValue(fee)-list.reduce((n,p)=>n+p.amount,0); const d=String(fee.paymentDate||fee.date||''); if(rest>0.5&&inRange(d)) lines.push({date:d,student:fee.studentName||getFeeStudent(fee)?.name||'',cls:fee.class||fee.className||'',head:fee.feeType||fee.fee_type||'Monthly',month:fee.month||'',academicYear:fee.academicYear||fee.academic_year||'',amount:rest,method:'Earlier / adjustment',receipt:fee.receiptNumber||fee.receiptNo||'',by:fee.receivedBy||fee.received_by||'N/A'}); }
         });
         // Fees with no installment history at all: fall back to the fee record itself.
         (db.fees||[]).forEach(f=>{
             if(payByFee.has(String(f.id))||trashed.has(String(f.id))) return;
             const paid=feePaidValue(f); const d=String(f.paymentDate||f.date||'');
             if(paid<=0||!inRange(d)) return;
-            lines.push({date:d,student:f.studentName||getFeeStudent(f)?.name||'',cls:f.class||f.className||'',head:f.feeType||f.fee_type||'Monthly',amount:paid,method:f.paymentMethod||f.payment_method||'N/A',receipt:f.receiptNumber||f.receiptNo||'',by:f.receivedBy||f.received_by||'N/A'});
+            lines.push({date:d,student:f.studentName||getFeeStudent(f)?.name||'',cls:f.class||f.className||'',head:f.feeType||f.fee_type||'Monthly',month:f.month||'',academicYear:f.academicYear||f.academic_year||'',amount:paid,method:f.paymentMethod||f.payment_method||'N/A',receipt:f.receiptNumber||f.receiptNo||'',by:f.receivedBy||f.received_by||'N/A'});
         });
         lines.sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.student).localeCompare(String(b.student)));
-        const rows=lines.map(l=>`<tr><td>${escFee(formatDateShort_(l.date))}</td><td>${escFee(l.student)}</td><td>${escFee(l.cls)}</td><td>${escFee(l.head)}</td><td>${Number(l.amount).toLocaleString()}</td><td>${escFee(l.method)}</td><td>${escFee(l.receipt)}</td><td>${escFee(l.by)}</td></tr>`).join('');
+        const rows=lines.map(l=>{ const feePeriod=[l.month,feeReportYearOnly_(l.academicYear)].filter(Boolean).join(' ')||'—'; return `<tr><td>${escFee(formatDateShort_(l.date))}</td><td>${escFee(l.student)}</td><td>${escFee(l.cls)}</td><td>${escFee(l.head)}</td><td>${escFee(feePeriod)}</td><td>${Number(l.amount).toLocaleString()}</td><td>${escFee(l.method)}</td><td>${escFee(l.receipt)}</td><td>${escFee(l.by)}</td></tr>`; }).join('');
         const total=lines.reduce((n,l)=>n+Number(l.amount),0);
         const range=from||to?`${from?formatDateWithDay_(from):'Start'} to ${to?formatDateWithDay_(to):'End'}`:'All Dates';
-        return `<div class="report-page">${reportPrintHeader('Fee Collection Report (By Date)')}<div class="custom-report-meta"><span><b>Date Range:</b> ${escFee(range)}</span><span><b>Payments:</b> ${lines.length}</span><span><b>Total Collected:</b> ₨ ${total.toLocaleString()}</span></div><table class="custom-report-table"><thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Fee Head</th><th>Amount Paid</th><th>Payment Method</th><th>Receipt No.</th><th>Received By</th></tr></thead><tbody>${rows||'<tr><td colspan="8">No fee collections found for the selected date range.</td></tr>'}</tbody></table><div class="footer">Printing Date: ${dmy_()} | ${typeof schoolName!=='undefined'&&schoolName?escFee(schoolName):'THE EDUCATORS SCHOOL'}</div></div>`;
+        return `<div class="report-page">${reportPrintHeader('Fee Collection Report (By Date)')}<div class="custom-report-meta"><span><b>Date Range:</b> ${escFee(range)}</span><span><b>Payments:</b> ${lines.length}</span><span><b>Total Collected:</b> ₨ ${total.toLocaleString()}</span></div><table class="custom-report-table"><thead><tr><th>Date</th><th>Student</th><th>Class</th><th>Fee Head</th><th>Fee Month / Year</th><th>Amount Paid</th><th>Payment Method</th><th>Receipt No.</th><th>Received By</th></tr></thead><tbody>${rows||'<tr><td colspan="9">No fee collections found for the selected date range.</td></tr>'}</tbody></table><div class="footer">Printing Date: ${dmy_()} | ${'THE QUAID CONCEPT EDUCATION SYSTEM'}</div></div>`;
     }
 
     // School-wide Fee Defaulters: every student with ANY outstanding balance
@@ -8562,7 +9023,7 @@ async function printPreviousPromotionData(index) {
                 const items = getStudentOutstandingFeeItems_(className, student.id);
                 if (!items.length) return;
                 const outstanding = items.reduce((n,f)=>n+feeDueValue(f),0);
-                const status = getStudentEffectiveFeeStatus_(student, className);
+                const status = items.some(f=>feePaidValue(f)>0) ? 'Partial' : 'Unpaid';
                 rows.push({ student, className, outstanding, status, monthCount: items.length });
             });
         });
@@ -9086,6 +9547,8 @@ async function printPreviousPromotionData(index) {
     async function clearArchiveCenterState_(){db.archive={attendance:[],exams:[],fees:[]};await persistArchiveCenterState_();}
 
     function openArchiveCenter() {
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can access the Archive Center', 'error'); return; }
+        if (denyTeacherAccess_()) return;
         if (currentUser?.role === 'Teacher') { showToast('Only admin can access the Archive Center', 'error'); return; }
         const modal = document.getElementById('archiveCenterModal');
         if (!modal) return;
@@ -9146,7 +9609,7 @@ async function printPreviousPromotionData(index) {
         }).join('');
     }
 
-    async function archiveSelectedAttendance() {
+    async function archiveSelectedAttendance() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can manage archives', 'error'); return; }
         const cls = document.getElementById('archAttClassSelect').value;
         const ids = Array.from(document.querySelectorAll('#archLiveAttendanceList input:checked')).map(function(cb) { return cb.value; });
         if (!cls) { showToast('Select a class first', 'error'); return; }
@@ -9190,7 +9653,7 @@ async function printPreviousPromotionData(index) {
         }).join('');
     }
 
-    async function archiveSelectedExams() {
+    async function archiveSelectedExams() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can manage archives', 'error'); return; }
         const ids = Array.from(document.querySelectorAll('#archLiveExamsList input:checked')).map(function(cb) { return cb.value; });
         if (!ids.length) { showToast('Select at least one exam', 'error'); return; }
         if (!confirm('Archive ' + ids.length + ' exam(s) and their results?\n\nYou can restore them anytime from the Archived Exams list below.')) return;
@@ -9246,7 +9709,7 @@ async function printPreviousPromotionData(index) {
         }).join('');
     }
 
-    async function archiveSelectedFees() {
+    async function archiveSelectedFees() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can manage archives', 'error'); return; }
         const year = document.getElementById('archFeeYearSelect').value;
         const ids = Array.from(document.querySelectorAll('#archLiveFeesList input:checked')).map(function(cb) { return cb.value; });
         if (!ids.length) { showToast('Select at least one student', 'error'); return; }
@@ -9318,7 +9781,7 @@ async function printPreviousPromotionData(index) {
         return Array.from(document.querySelectorAll('#' + bodyId + ' input:checked')).map(function(cb) { return cb.value; });
     }
 
-    async function restoreSelectedArchive(type) {
+    async function restoreSelectedArchive(type) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can restore archives', 'error'); return; }
         const ids = getCheckedArchiveIds_(type);
         if (!ids.length) { showToast('Select at least one record to restore', 'error'); return; }
         if (!confirm('Restore ' + ids.length + ' archived ' + type + ' record(s) back into the live app?')) return;
@@ -9384,16 +9847,11 @@ async function printPreviousPromotionData(index) {
         } catch (e) { showToast('❌ ' + e.message, 'error'); }
     }
 
-    async function deleteSelectedArchive(type) {
+    async function deleteSelectedArchive(type) { if (!isSuperAdminUser_()) { showToast('Only Super Admin can delete archive records', 'error'); return; }
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can permanently delete archived records', 'error'); return; }
         const ids = getCheckedArchiveIds_(type);
         if (!ids.length) { showToast('Select at least one record to delete', 'error'); return; }
         if (!confirm('⚠️ PERMANENTLY delete ' + ids.length + ' archived ' + type + ' record(s)?\n\nThis CANNOT be undone. Consider exporting as PDF first if you might need this later.')) return;
-        const adminPassword = prompt('Enter your admin password to confirm this permanent deletion:');
-        if (!adminPassword) { showToast('Permanent delete cancelled — password required.', 'info'); return; }
-        try {
-            const authCheck = await invokeSchoolAuth('login', { username: currentUsername, password: adminPassword, role: 'admin' });
-            if (!authCheck || !authCheck.success) { showToast('Incorrect admin password. Delete cancelled.', 'error'); return; }
-        } catch (e) { showToast('Could not verify admin password. Delete cancelled.', 'error'); return; }
         try {
             showToast('Deleting permanently... ⏳', 'info');
             db.archive = db.archive || {};
@@ -9456,7 +9914,7 @@ async function printPreviousPromotionData(index) {
     }
 
     // ==================== DATA EXPORT/IMPORT ====================
-    function exportData() { if (currentUser?.role === 'Teacher') { showToast('Only admin can export data', 'error'); return; } const dataStr = JSON.stringify(db, null, 2); const blob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `school_data_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); showToast('Data exported successfully! 📥', 'success'); }
+    function exportData() { if (!isSuperAdminUser_()) { showToast('Only Super Admin can export school data', 'error'); return; } if (denyTeacherAccess_('Teacher is not allowed to export school data.')) return; if (currentUser?.role === 'Teacher') { showToast('Only admin can export data', 'error'); return; } const dataStr = JSON.stringify(db, null, 2); const blob = new Blob([dataStr], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `school_data_${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url); showToast('Data exported successfully! 📥', 'success'); }
     async function upsertImportedRows_(table, rows, conflict) {
         const clean = Array.isArray(rows) ? rows.filter(Boolean) : [];
         if (!clean.length) return;
@@ -9534,6 +9992,8 @@ async function printPreviousPromotionData(index) {
     }
 
     function importData() {
+        if (!isSuperAdminUser_()) { showToast('Only Super Admin can import school data', 'error'); return; }
+        if (denyTeacherAccess_('Teacher is not allowed to import school data.')) return;
         if (currentUser?.role === 'Teacher') { showToast('Only admin can import data', 'error'); return; }
         if (!databaseLoadedFromSupabase) { showToast('⚠️ School data is still loading. Please wait before importing.', 'warning'); return; }
         const input = document.createElement('input');
@@ -9716,6 +10176,10 @@ async function printPreviousPromotionData(index) {
             if(settings?.schoolName){ document.getElementById('schoolName').value=settings.schoolName; AppStorage.set('school_name',settings.schoolName); }
             if(settings?.academicYear){ document.getElementById('academicYear').value=settings.academicYear; AppStorage.set('academic_year',settings.academicYear); }
             if(settings?.defaultFee!==undefined){ document.getElementById('defaultFee').value=settings.defaultFee; AppStorage.set('default_fee',settings.defaultFee); }
+            if(settings&&typeof settings==='object'&&Object.prototype.hasOwnProperty.call(settings,'feeIncrease')){
+                if(settings.feeIncrease&&typeof settings.feeIncrease==='object') AppStorage.set('fee_increase_settings',JSON.stringify(settings.feeIncrease)); else AppStorage.remove('fee_increase_settings');
+                if(typeof initFeeIncreasePanel_==='function') initFeeIncreasePanel_();
+            }
             applySchoolNameToVisibleUI_();
             onlineSettingsLoaded_=true;
             return true;
@@ -9913,6 +10377,12 @@ async function printPreviousPromotionData(index) {
         else if (!found) hintBox.innerHTML = '💡 Enter your username or registered email';
     }
 
+    function openSuperAdminForgotPassword() {
+        openForgotPassword();
+        const input = document.getElementById('forgotUsername');
+        if (input) { input.value = 'superadmin'; showUserEmailHint('superadmin'); }
+    }
+
     function openTeacherForgotPassword() {
         openForgotPassword();
         const teacherEmail = (USERS.teacher && USERS.teacher.email) ? USERS.teacher.email : '';
@@ -9995,14 +10465,48 @@ async function printPreviousPromotionData(index) {
         }
     });
 
-    function handleLogout() { if (confirm('Are you sure you want to logout?')) { passwordRecoveryActive = false; resetUsername = ''; profileOTPRequestId = ''; profileOTPVerified = false; SUPABASE_ACCESS_TOKEN = ''; currentUser = null; currentUsername = ''; AppStorage.remove('sms_auth_session_v1'); document.body.classList.remove('role-admin', 'role-teacher'); document.getElementById('mainDashboard').classList.add('hidden'); document.getElementById('loginScreen').style.display = 'flex'; setLoginStatus('', 'info'); document.body.style.background = ''; document.getElementById('loginPassword').value = ''; document.getElementById('teacherLoginPassword').value = ''; showToast('Logged out successfully', 'info'); } }
+    function clearFeeLookupUiOnLogout_() {
+        currentFeeLookupStudent_ = null;
+        const lookupInput = document.getElementById('feeLookupSearch');
+        if (lookupInput) lookupInput.value = '';
+        const lookupResults = document.getElementById('feeLookupResults');
+        if (lookupResults) { lookupResults.innerHTML = ''; lookupResults.classList.add('hidden'); }
+        const summary = document.getElementById('selectedFeeStudentSummary');
+        if (summary) { summary.innerHTML = ''; summary.classList.add('hidden'); }
+        const feeSearch = document.getElementById('feeStudentSearch');
+        if (feeSearch) feeSearch.value = '';
+        const feeSearchResults = document.getElementById('feeStudentSearchResults');
+        if (feeSearchResults) { feeSearchResults.innerHTML = ''; feeSearchResults.classList.add('hidden'); }
+        const feeModal = document.getElementById('feeModal');
+        if (feeModal) feeModal.classList.add('hidden');
+        const feeEditingId = document.getElementById('feeEditingId');
+        if (feeEditingId) feeEditingId.value = '';
+    }
+    function handleLogout() {
+        if (!confirm('Are you sure you want to logout?')) return;
+        clearFeeLookupUiOnLogout_();
+        passwordRecoveryActive = false; resetUsername = ''; profileOTPRequestId = ''; profileOTPVerified = false;
+        SUPABASE_ACCESS_TOKEN = ''; currentUser = null; currentUsername = ''; AppStorage.remove('sms_auth_session_v1');
+        document.body.classList.remove('role-admin', 'role-teacher', 'role-super-admin');
+        document.getElementById('mainDashboard').classList.add('hidden');
+        document.getElementById('loginScreen').style.display = 'flex'; setLoginStatus('', 'info');
+        document.body.style.background = ''; document.getElementById('loginPassword').value = '';
+        document.getElementById('teacherLoginPassword').value = ''; document.getElementById('superAdminLoginPassword').value = '';
+        document.body.style.overflow = 'auto';
+        showToast('Logged out successfully', 'info');
+    }
 
     // ==================== TABS ====================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', function() {
+            const tab = this.dataset.tab;
+            if (normalizedRoleName_(currentUser?.role) === 'teacher' && !['students', 'attendance', 'exams'].includes(tab)) {
+                showToast('Teacher access is limited to Students, Attendance, Exams and Exam Results.', 'error');
+                applyRolePermissions();
+                return;
+            }
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            const tab = this.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
             if (tab === 'reports') { /* Reports are generated on demand; no student list is loaded here. */ }
@@ -10083,8 +10587,10 @@ async function printPreviousPromotionData(index) {
         document.getElementById('currentUserName').textContent = currentUser.name || currentUsername;
         document.getElementById('currentUserRoleText').textContent = currentUser.role || '';
         document.getElementById('currentUserEmail').textContent = currentUser.email || '';
-        document.body.classList.remove('role-admin', 'role-teacher');
-        document.body.classList.add('role-' + String(currentUser.role || '').toLowerCase());
+        document.body.classList.remove('role-admin', 'role-teacher', 'role-principal', 'role-super-admin');
+        if (isSuperAdminUser_()) document.body.classList.add('role-super-admin');
+        else if (isPrincipalUser_()) document.body.classList.add('role-admin', 'role-principal');
+        else document.body.classList.add('role-teacher');
         applyRolePermissions();
 
         // Reload authoritative Supabase data after refresh so changes made on another
@@ -10104,6 +10610,7 @@ async function printPreviousPromotionData(index) {
         document.getElementById('mainDashboard').classList.add('hidden');
         document.getElementById('loginPassword').value = '';
         document.getElementById('teacherLoginPassword').value = '';
+        document.getElementById('superAdminLoginPassword').value = '';
         // SCHOOL 2 BRAND LOCK: never inherit another school's saved branding.
         const SCHOOL2_BRAND_NAME = 'THE QUAID CONCEPT EDUCATION SYSTEM';
         AppStorage.set('school_name', SCHOOL2_BRAND_NAME);
@@ -10131,6 +10638,12 @@ async function printPreviousPromotionData(index) {
             if (!document.getElementById('forgotPasswordModal').classList.contains('hidden')) closeForgotPassword();
             if (!document.getElementById('profileSettingsModal').classList.contains('hidden')) closeProfileSettings();
         }
+    });
+
+    // Also clear after browser page restoration (for example Android Chrome Back/refresh).
+    window.addEventListener('pageshow', function() {
+        const passwordField = document.getElementById('superAdminLoginPassword');
+        if (passwordField) passwordField.value = '';
     });
 
     console.log('🏫 Complete School Management System v10.2');
@@ -10253,7 +10766,7 @@ async function printPreviousPromotionData(index) {
         </div>
     </div>
 
-<div id="reportPrintSelectionModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4"><div class="modal-content bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-print mr-2"></i> Print Report</h2><button onclick="closeReportPrintSelection()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none transition">×</button></div><div class="space-y-4"><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Report Type</label><select id="reportPrintType" onchange="reportPrintTypeChanged()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="class-contact">Class Contact List</option><option value="student-fee">Student Fee List</option><option value="student-basic">Student Basic List</option><option value="active-students-class">Active Students List (Class)</option><option value="active-students-all">Active Students List (All Classes)</option><option value="teacher-list">Teacher List</option><option value="class-percentage">Class Percentage Report</option><option value="student-result">Student — All Tests / Overall Result</option><option value="student-complete">Student — Complete Report</option><option value="student-fee-detail">Student — Complete Fee History</option><option value="student-attendance">Student — Attendance Report</option><option value="previous-class-history">Promoted Student — Previous Class History</option><option value="class-student-report">Class Report — Student Report</option><option value="class-all-report">Class Report — All Class Report</option><option value="fee-defaulters">Fee Defaulters (All Classes)</option><option value="fee-collection-by-date">Fee Collection Report (By Date)</option></select></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Report Title</label><input id="studentReportTitleInput" type="text" value="Academic Records" placeholder="e.g. Mid Year Exam" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Student Information</label><select id="studentReportInfoMode" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="basic">Basic Information (Parent Copy)</option><option value="full">Full Information (Existing Full Report)</option></select></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Test Date</label><select id="studentReportTestDateMode" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="show">Show Test Date</option><option value="hide">Hide Test Date</option></select></div><div id="feeCollectionDateWrap" class="hidden"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Collection Date Range</label><div class="grid grid-cols-2 gap-2"><input id="feeCollectionFromDate" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><input id="feeCollectionToDate" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></div><div class="text-[11px] text-gray-500 mt-1">Leave either date empty to keep that side open.</div></div><div id="reportPrintClassWrap"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Class</label><select id="reportPrintClassSelect" onchange="reportPrintClassChanged()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></select></div><div id="reportPrintStudentWrap" class="hidden"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Student</label><select id="reportPrintStudentSelect" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></select></div><div class="flex justify-end gap-2 pt-2"><button onclick="closeReportPrintSelection()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-xs px-4 py-2 rounded-xl">Cancel</button><button onclick="confirmReportPrint()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl"><i class="fa-solid fa-print"></i> Print Report</button></div></div></div></div>
+<div id="reportPrintSelectionModal" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4"><div class="modal-content bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 relative"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-print mr-2"></i> Print Report</h2><button onclick="closeReportPrintSelection()" class="text-gray-400 hover:text-gray-600 text-3xl leading-none transition">×</button></div><div class="space-y-4"><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Report Type</label><select id="reportPrintType" onchange="reportPrintTypeChanged()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="class-contact">Class Contact List</option><option value="student-fee">Student Fee List</option><option value="student-basic">Student Basic List</option><option value="active-students-class">Active Students List (Class)</option><option value="active-students-all">Active Students List (All Classes)</option><option value="teacher-list">Teacher List</option><option value="class-percentage">Class Percentage Report</option><option value="student-result">Student — All Tests / Overall Result</option><option value="student-complete">Student — Complete Report</option><option value="student-fee-detail">Student — Complete Fee History</option><option value="all-students-fee-detail">All Students — Complete Fee History</option><option value="student-attendance">Student — Attendance Report</option><option value="previous-class-history">Promoted Student — Previous Class History</option><option value="class-student-report">Class Report — Student Report</option><option value="class-all-report">Class Report — All Class Report</option><option value="fee-defaulters">Fee Defaulters (All Classes)</option><option value="fee-collection-by-date">Fee Collection Report (By Date)</option></select></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Report Title</label><input id="studentReportTitleInput" type="text" value="Academic Records" placeholder="e.g. Mid Year Exam" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Student Information</label><select id="studentReportInfoMode" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="basic">Basic Information (Parent Copy)</option><option value="full">Full Information (Existing Full Report)</option></select></div><div><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Test Date</label><select id="studentReportTestDateMode" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><option value="show">Show Test Date</option><option value="hide">Hide Test Date</option></select></div><div id="feeCollectionDateWrap" class="hidden"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Collection Date Range</label><div class="grid grid-cols-2 gap-2"><input id="feeCollectionFromDate" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"><input id="feeCollectionToDate" type="date" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></div><div class="text-[11px] text-gray-500 mt-1">Leave either date empty to keep that side open.</div></div><div id="reportPrintClassWrap"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Class</label><select id="reportPrintClassSelect" onchange="reportPrintClassChanged()" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></select></div><div id="reportPrintStudentWrap" class="hidden"><label class="text-xs text-gray-500 font-bold uppercase block mb-1">Select Student</label><select id="reportPrintStudentSelect" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm"></select></div><div class="flex justify-end gap-2 pt-2"><button onclick="closeReportPrintSelection()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-xs px-4 py-2 rounded-xl">Cancel</button><button onclick="confirmReportPrint()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl"><i class="fa-solid fa-print"></i> Print Report</button></div></div></div></div>
 
 <script>
     document.addEventListener('keydown', function(e) {
@@ -10262,6 +10775,10 @@ async function printPreviousPromotionData(index) {
             if (modal && !modal.classList.contains('hidden')) closeReportPrintSelection();
         }
     });
+
+        function initFeeIncreasePanel_(){
+            const cfg=feeIncreaseSettings_();if(cfg){const set=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined&&v!==null)e.value=v;};set('feeIncreaseType',cfg.type);set('feeIncreaseValue',cfg.value);set('feeIncreaseMonth',cfg.month);set('feeIncreaseScope',cfg.scope);feeIncreaseScopeChanged_();set('feeIncreaseClass',cfg.className);set('feeIncreaseSection',cfg.section);feeIncreaseScopeChanged_();set('feeIncreaseStudent',cfg.studentId);const el=document.getElementById('feeIncreaseStatus');if(el)el.textContent=`Saved: ${cfg.type==='percent'?cfg.value+'%':'₨ '+cfg.value} from ${cfg.month}.`;}else{const m=document.getElementById('feeIncreaseMonth');if(m)m.value=FEE_MONTHS[new Date().getMonth()];feeIncreaseScopeChanged_();}}
+        document.addEventListener('DOMContentLoaded', initFeeIncreasePanel_);
 
         function applySchoolBranding() {
             const logo = typeof SCHOOL_LOGO_DATA_URI === 'string' ? SCHOOL_LOGO_DATA_URI : '';
@@ -10501,6 +11018,18 @@ async function printPreviousPromotionData(index) {
     </div>
 
 
+<script id="monthly-challan-superadmin-controls-init">
+(function(){
+  function initMonthlyChallanSelectors_(){
+    const cls=document.getElementById('feeMonthlyChallanClass');
+    if(cls){const prior=cls.value; const names=Array.isArray(FEE_CLASSES)&&FEE_CLASSES.length?FEE_CLASSES:Object.keys(db.students||{}); cls.innerHTML='<option value="__all__">All Classes</option>'+names.map(n=>'<option value="'+String(n).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')+'">'+String(n).replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join(''); if(names.includes(prior)) cls.value=prior;}
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initMonthlyChallanSelectors_); else initMonthlyChallanSelectors_();
+  const oldLogin=window.handleLogin;
+  if(typeof oldLogin==='function'&&!oldLogin.__monthlyChallanInitWrapped){window.handleLogin=function(){const r=oldLogin.apply(this,arguments);setTimeout(initMonthlyChallanSelectors_,0);return r;};window.handleLogin.__monthlyChallanInitWrapped=true;}
+})();
+</script>
+
 <!-- ACADEMIC DATA CLEANUP: DATE-RANGE ONLY; DOES NOT DELETE STUDENT PROFILE OR FEES -->
 <div id="academicCleanupModal" class="fixed inset-0 z-[10001] hidden items-center justify-center bg-black/70 p-4">
   <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
@@ -10533,7 +11062,7 @@ async function printPreviousPromotionData(index) {
 
 <script>
 function openAcademicCleanup(){
-  if(!currentUser || !canManageSchool_()){ showToast('Only admin can perform academic cleanup.','error'); return; }
+  if(!isSuperAdminUser_()){ showToast('Only Super Admin can perform academic cleanup.','error'); return; }
   const m=document.getElementById('academicCleanupModal');
   if(m){m.classList.remove('hidden');m.classList.add('flex');}
 }
@@ -10542,6 +11071,7 @@ function closeAcademicCleanup(){
   if(m){m.classList.add('hidden');m.classList.remove('flex');}
 }
 async function runAcademicCleanup(){
+  if(!isSuperAdminUser_()){ showToast('Only Super Admin can perform academic cleanup.','error'); return; }
   const from=document.getElementById('academicCleanupFrom')?.value;
   const to=document.getElementById('academicCleanupTo')?.value;
   const password=document.getElementById('academicCleanupPassword')?.value || '';
@@ -10710,7 +11240,7 @@ async function runAcademicCleanup(){
 })();
 </script>
 
-<div id="feeDetailsPasswordGate" class="fixed inset-0 bg-black bg-opacity-60 hidden z-[100] items-center justify-center p-4"><div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6"><h3 class="text-lg font-bold text-gray-800">🔒 Admin Verification</h3><p class="text-sm text-gray-600 mt-2">Enter the existing Admin password to view Fee Management details.</p><input id="feeDetailsAdminPasswordInput" type="password" autocomplete="current-password" class="w-full mt-4 border-2 border-gray-200 rounded-xl px-3 py-2.5" placeholder="Admin Password"><div id="feeDetailsPasswordError" class="text-sm text-red-600 mt-2 min-h-[20px]"></div><div class="flex justify-end gap-2 mt-4"><button type="button" onclick="closeFeeDetailsPasswordGate_()" class="bg-gray-200 text-gray-700 font-bold px-4 py-2 rounded-xl">Cancel</button><button type="button" onclick="verifyFeeDetailsPassword_()" class="bg-amber-600 text-white font-bold px-4 py-2 rounded-xl">Unlock</button></div></div></div>
 
-<script>(function(){window.openFeeDetailsPasswordGate_=function(){const g=document.getElementById("feeDetailsPasswordGate"),i=document.getElementById("feeDetailsAdminPasswordInput"),e=document.getElementById("feeDetailsPasswordError");if(!g)return;if(e)e.textContent="";if(i)i.value="";g.classList.remove("hidden");g.classList.add("flex");i?.focus();};window.closeFeeDetailsPasswordGate_=function(){const g=document.getElementById("feeDetailsPasswordGate");if(g){g.classList.add("hidden");g.classList.remove("flex");}};window.verifyFeeDetailsPassword_=async function(){const i=document.getElementById("feeDetailsAdminPasswordInput"),e=document.getElementById("feeDetailsPasswordError"),p=i?.value||"";if(!p){if(e)e.textContent="Admin password is required.";return;}try{const a=await invokeSchoolAuth("login",{username:"admin",password:p,role:"admin"});if(!a||!a.success){if(e)e.textContent="Incorrect Admin password.";return;}document.getElementById("feeDetailsProtectedContent")?.classList.remove("hidden");document.getElementById("feeDetailsUnlockPanel")?.classList.add("hidden");closeFeeDetailsPasswordGate_();showToast("Fee details unlocked for this session.","success");}catch(x){console.error("Fee details admin verification failed:",x);if(e)e.textContent="Admin password verification failed.";}};})();</script>
+
+
 </body></html>
